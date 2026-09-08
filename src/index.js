@@ -1,11 +1,26 @@
+const crypto = require('crypto');
+
 class MT4Client {
-  constructor(host, port = 443) {
+  constructor(host = 'mt4.mrpc.pro', port = 443, apiKey = null, id = null) {
     this.host = host;
     this.port = port;
+    this.apiKey = apiKey || process.env.MRPC_API_KEY || null;
+    this.id = id || null;
     this.connected = false;
   }
 
+  async getId(user, password) {
+    if (!this.id) {
+      const hash = crypto.createHash('md5').update(`${user}:${password}`).digest('hex');
+      this.id = `${hash.substring(0, 8)}-${hash.substring(8, 12)}-4${hash.substring(13, 16)}-8${hash.substring(17, 20)}-${hash.substring(20, 32)}`;
+    }
+    return this.id;
+  }
+
   async connect(login, password) {
+    if (!this.id) {
+      await this.getId(login, password);
+    }
     this.connected = true;
     return true;
   }

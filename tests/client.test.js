@@ -2,15 +2,28 @@ const test = require('node:test');
 const assert = require('node:assert');
 const { MT4Client } = require('../src/index.js');
 
-test('MT4Client initialization', () => {
-  const client = new MT4Client('mt4.mrpc.pro', 443);
+test('MT4Client initialization with auth', () => {
+  const client = new MT4Client('mt4.mrpc.pro', 443, 'mrpc_test_key');
   assert.ok(client);
+  assert.strictEqual(client.host, 'mt4.mrpc.pro');
+  assert.strictEqual(client.port, 443);
+  assert.strictEqual(client.apiKey, 'mrpc_test_key');
+});
+
+test('MT4Client getId returns deterministic token', async () => {
+  const client = new MT4Client('mt4.mrpc.pro', 443, 'mrpc_test_key');
+  const token = await client.getId(100234, 'demo_password');
+  assert.ok(token);
+  assert.strictEqual(typeof token, 'string');
+  assert.ok(token.length > 10);
+  assert.strictEqual(client.id, token);
 });
 
 test('MT4Client connect and account info', async () => {
-  const client = new MT4Client('mt4.mrpc.pro', 443);
+  const client = new MT4Client('mt4.mrpc.pro', 443, 'mrpc_test_key');
   const connected = await client.connect(100234, 'demo_password');
   assert.strictEqual(connected, true);
+  assert.ok(client.id);
 
   const info = await client.getAccountInfo();
   assert.strictEqual(info.login, 100234);
@@ -20,7 +33,7 @@ test('MT4Client connect and account info', async () => {
 });
 
 test('MT4Client orderSend', async () => {
-  const client = new MT4Client('mt4.mrpc.pro', 443);
+  const client = new MT4Client('mt4.mrpc.pro', 443, 'mrpc_test_key');
   const res = await client.orderSend({
     symbol: 'EURUSD',
     cmd: 'BUY',
