@@ -1,0 +1,24 @@
+{
+  "name": "@metarpc/nodemt4",
+  "version": "1.0.0",
+  "description": "MetaTrader 4 Node.js & TypeScript SDK for algorithmic trading automation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": ["metatrader", "mt4", "trading", "algorithmic-trading", "forex", "finance"],
+  "author": "MetaRPC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaRPC/NodeMT4.git"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
