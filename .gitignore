@@ -3,3 +3,5 @@ dist/
 site/
 .env
 *.log
+
+.cache/

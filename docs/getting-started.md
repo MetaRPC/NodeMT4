@@ -10,7 +10,7 @@
 import { MT4Client } from '@metarpc/nodemt4';
 
 async function main() {
-  const client = new MT4Client('mt4.broker.com', 443);
+  const client = new MT4Client('mt4.mrpc.pro', 443);
 
   console.log('Connecting to MT4...');
   await client.connect(100234, 'my_password');
@@ -37,3 +37,7 @@ async function main() {
 
 main().catch(console.error);
 ```
+
+
+> **Authentication Note**: Connecting to `mt4.mrpc.pro:443` requires a valid MetaRPC API key. Register for free at [https://mrpc.pro/signup](https://mrpc.pro/signup) and generate your token in [https://mrpc.pro/my](https://mrpc.pro/my).
+
