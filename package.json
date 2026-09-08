@@ -2,11 +2,10 @@
   "name": "@metarpc/nodemt4",
   "version": "1.0.0",
   "description": "MetaTrader 4 Node.js & TypeScript SDK for algorithmic trading automation",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "jest"
+    "test": "node --test tests/*.test.js"
   },
   "keywords": ["metatrader", "mt4", "trading", "algorithmic-trading", "forex", "finance"],
   "author": "MetaRPC",
