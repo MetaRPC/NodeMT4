@@ -972,7 +972,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MT4Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@metarpc/nodemt4'</span><span class="p">;</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.broker.com'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">);</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.mrpc.pro'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">);</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Connecting to MT4...'</span><span class="p">);</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="mf">100234</span><span class="p">,</span><span class="w"> </span><span class="s1">'my_password'</span><span class="p">);</span>
@@ -999,6 +999,9 @@
 <a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="nx">main</span><span class="p">().</span><span class="k">catch</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
 </code></pre></div>
+<blockquote>
+<p><strong>Authentication Note</strong>: Connecting to <code>mt4.mrpc.pro:443</code> requires a valid MetaRPC API key. Register for free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a> and generate your token in <a href="https://mrpc.pro/my">https://mrpc.pro/my</a>.</p>
+</blockquote>
 
 
 
