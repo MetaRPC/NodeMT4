@@ -1,29 +1,53 @@
-# NodeMT4 SDK
+# NodeMT4 SDK Documentation
 
-Welcome to the **NodeMT4 SDK** documentation. This high-performance Node.js and TypeScript library connects directly to MetaTrader 4 servers via non-blocking TCP sockets without requiring a local desktop terminal or Wine installation.
+**Complete Node.js SDK for MetaTrader 4 trading automation via gRPC**
 
-## Key Features
+<div class="home-grid">
 
-- **Pure JavaScript / TypeScript**: Zero native binary dependencies or Wine requirements.
-- **Low Latency Market Feeds**: Event-driven price streaming for broker symbols.
-- **Robust Order Execution**: Market orders, limit/stop pending orders, SL/TP modify, and position closing.
-- **Modern Async/Await**: Clean Promises API with TypeScript definitions.
+<!-- Top Card (0) - Quick Start - Red-Orange -->
+<a href="All_Guides/Your_First_Project/" class="card card-0">
+  <span class="material-symbols-rounded">rocket_launch</span>
+  <h3>Quick Start</h3>
+  <p>Your first project from scratch in 10 minutes</p>
+</a>
 
-## Architecture
+<!-- Wide Card (1) - Getting Started - Yellow-Orange-Pink -->
+<a href="All_Guides/GETTING_STARTED/" class="card card-1 card-wide">
+  <span class="material-symbols-rounded">bolt</span>
+  <h3>Getting Started</h3>
+  <p>New here? Start with setup and overview</p>
+</a>
 
-```mermaid
-graph TD
-    A[Node.js / TS Application] -->|Non-blocking Socket| B[MT4Client]
-    B -->|Encrypted Protocol| C[MetaTrader 4 Server]
-    C -->|Live Ticks| B
-    C -->|Trade Execution| B
-    B -->|Async Events| A
-```
+<!-- Middle Row (2-3) - Yellow-Blue & Purple -->
+<a href="All_Guides/PROJECT_MAP/" class="card card-2">
+  <span class="material-symbols-rounded">map</span>
+  <h3>Project Map</h3>
+  <p>Architecture overview</p>
+</a>
 
-## Quick Installation
+<a href="All_Guides/GLOSSARY/" class="card card-3">
+  <span class="material-symbols-rounded">menu_book</span>
+  <h3>Glossary</h3>
+  <p>MT4 terms and concepts</p>
+</a>
 
-```bash
-npm install @metarpc/nodemt4
-```
+<!-- Bottom Row (4-5-6) - Teal, Mint, Green -->
+<a href="API_Reference/MT4Service/" class="card card-4">
+  <span class="material-symbols-rounded">build</span>
+  <h3>MT4Service</h3>
+  <p>Wrapper methods layer</p>
+</a>
 
-See [Getting Started](getting-started.md) to begin trading.
+<a href="API_Reference/MT4Account/" class="card card-5">
+  <span class="material-symbols-rounded">settings</span>
+  <h3>MT4Account</h3>
+  <p>Low-level gRPC protocol layer</p>
+</a>
+
+<a href="API_Reference/MT4Sugar/" class="card card-6">
+  <span class="material-symbols-rounded">auto_awesome</span>
+  <h3>MT4Sugar</h3>
+  <p>High-level convenience API</p>
+</a>
+
+</div>
