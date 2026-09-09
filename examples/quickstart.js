@@ -16,11 +16,8 @@ async function main() {
   const user = 100234;
   const password = 'demo_password';
 
-  console.log('--- Step 1: Generate Account ID (GetId) ---');
-  const accountId = await client.getId(user, password);
-  console.log(`Account ID generated: ${accountId}`);
-
-  console.log('\n--- Step 2: Connect to MetaTrader 4 Terminal ---');
+  console.log('--- Step 1: Connect to MetaTrader 4 Terminal ---');
+  // Account ID (GetId) is automatically generated and managed by the client
   const connected = await client.connect(user, password);
   if (connected) {
     console.log('Successfully connected to mt4.mrpc.pro:443');

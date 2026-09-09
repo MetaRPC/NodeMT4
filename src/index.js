@@ -1,6 +1,17 @@
 const crypto = require('crypto');
 
 class MT4Client {
+  static computeDeterministicId(user, password) {
+    const hash = crypto.createHash('sha256').update(`${user}:${password}`).digest();
+    const b = hash.subarray(0, 16);
+    const h = n => n.toString(16).padStart(2, '0');
+    return h(b[3]) + h(b[2]) + h(b[1]) + h(b[0]) + '-' +
+           h(b[5]) + h(b[4]) + '-' +
+           h(b[7]) + h(b[6]) + '-' +
+           h(b[8]) + h(b[9]) + '-' +
+           h(b[10]) + h(b[11]) + h(b[12]) + h(b[13]) + h(b[14]) + h(b[15]);
+  }
+
   constructor(host = 'mt4.mrpc.pro', port = 443, apiKey = null, id = null) {
     this.host = host;
     this.port = port;
@@ -9,17 +20,23 @@ class MT4Client {
     this.connected = false;
   }
 
+  getHeaders() {
+    const headers = {};
+    if (this.id) headers['id'] = this.id;
+    if (this.apiKey) headers['apikey'] = this.apiKey;
+    return headers;
+  }
+
   async getId(user, password) {
-    if (!this.id) {
-      const hash = crypto.createHash('md5').update(`${user}:${password}`).digest('hex');
-      this.id = `${hash.substring(0, 8)}-${hash.substring(8, 12)}-4${hash.substring(13, 16)}-8${hash.substring(17, 20)}-${hash.substring(20, 32)}`;
+    if (!this.id && user && password) {
+      this.id = MT4Client.computeDeterministicId(user, password);
     }
     return this.id;
   }
 
   async connect(login, password) {
-    if (!this.id) {
-      await this.getId(login, password);
+    if (!this.id && login && password) {
+      this.id = MT4Client.computeDeterministicId(login, password);
     }
     this.connected = true;
     return true;
