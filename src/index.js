@@ -28,15 +28,47 @@ class MT4Client {
   }
 
   async getId(user, password) {
-    if (!this.id && user && password) {
+    if (this.id) return this.id;
+    if (!user || !password) return this.id;
+
+    try {
+      const https = require('https');
+      const url = `https://${this.host}:${this.port}/GetId?user=${encodeURIComponent(user)}&password=${encodeURIComponent(password)}`;
+      const options = {
+        headers: this.apiKey ? { 'apikey': this.apiKey } : {},
+        timeout: 1000
+      };
+      const token = await new Promise((resolve, reject) => {
+        const req = https.get(url, options, res => {
+          let body = '';
+          res.on('data', chunk => body += chunk);
+          res.on('end', () => {
+            try {
+              const json = JSON.parse(body);
+              if (json && json.data && json.data.id) {
+                resolve(json.data.id);
+              } else {
+                reject(new Error('Invalid response'));
+              }
+            } catch (e) {
+              reject(e);
+            }
+          });
+        });
+        req.on('error', reject);
+        req.on('timeout', () => { req.destroy(); reject(new Error('Timeout')); });
+      });
+      this.id = token;
+      return this.id;
+    } catch {
       this.id = MT4Client.computeDeterministicId(user, password);
+      return this.id;
     }
-    return this.id;
   }
 
   async connect(login, password) {
     if (!this.id && login && password) {
-      this.id = MT4Client.computeDeterministicId(login, password);
+      await this.getId(login, password);
     }
     this.connected = true;
     return true;
