@@ -4092,7 +4092,6 @@ proto.mt4_term_api.ConnectExRequest.toObject = function(includeInstance, msg) {
     user: jspb.Message.getFieldWithDefault(msg, 1, 0),
     password: jspb.Message.getFieldWithDefault(msg, 2, ""),
     mtClusterName: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    baseChartSymbol: jspb.Message.getFieldWithDefault(msg, 4, ""),
     expertsToAddList: jspb.Message.toObjectList(msg.getExpertsToAddList(),
     proto.mt4_term_api.ExpertAdviser.toObject, includeInstance),
     timeoutSeconds: jspb.Message.getFieldWithDefault(msg, 6, 0),
@@ -4145,10 +4144,6 @@ proto.mt4_term_api.ConnectExRequest.deserializeBinaryFromReader = function(msg, 
     case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setMtClusterName(value);
-      break;
-    case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setBaseChartSymbol(value);
       break;
     case 5:
       var value = new proto.mt4_term_api.ExpertAdviser;
@@ -4214,13 +4209,6 @@ proto.mt4_term_api.ConnectExRequest.serializeBinaryToWriter = function(message, 
   if (f.length > 0) {
     writer.writeString(
       3,
-      f
-    );
-  }
-  f = /** @type {string} */ (jspb.Message.getField(message, 4));
-  if (f != null) {
-    writer.writeString(
-      4,
       f
     );
   }
@@ -4307,42 +4295,6 @@ proto.mt4_term_api.ConnectExRequest.prototype.getMtClusterName = function() {
  */
 proto.mt4_term_api.ConnectExRequest.prototype.setMtClusterName = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional string base_chart_symbol = 4;
- * @return {string}
- */
-proto.mt4_term_api.ConnectExRequest.prototype.getBaseChartSymbol = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.mt4_term_api.ConnectExRequest} returns this
- */
-proto.mt4_term_api.ConnectExRequest.prototype.setBaseChartSymbol = function(value) {
-  return jspb.Message.setField(this, 4, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.mt4_term_api.ConnectExRequest} returns this
- */
-proto.mt4_term_api.ConnectExRequest.prototype.clearBaseChartSymbol = function() {
-  return jspb.Message.setField(this, 4, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.mt4_term_api.ConnectExRequest.prototype.hasBaseChartSymbol = function() {
-  return jspb.Message.getField(this, 4) != null;
 };
 
 
@@ -4524,7 +4476,6 @@ proto.mt4_term_api.ConnectByTokenRequest.prototype.toObject = function(opt_inclu
  */
 proto.mt4_term_api.ConnectByTokenRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    baseChartSymbol: jspb.Message.getFieldWithDefault(msg, 1, ""),
     timeoutSeconds: jspb.Message.getFieldWithDefault(msg, 2, 0),
     expiration: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
@@ -4563,10 +4514,6 @@ proto.mt4_term_api.ConnectByTokenRequest.deserializeBinaryFromReader = function(
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setBaseChartSymbol(value);
-      break;
     case 2:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setTimeoutSeconds(value);
@@ -4604,13 +4551,6 @@ proto.mt4_term_api.ConnectByTokenRequest.prototype.serializeBinary = function() 
  */
 proto.mt4_term_api.ConnectByTokenRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = /** @type {string} */ (jspb.Message.getField(message, 1));
-  if (f != null) {
-    writer.writeString(
-      1,
-      f
-    );
-  }
   f = /** @type {number} */ (jspb.Message.getField(message, 2));
   if (f != null) {
     writer.writeUint32(
@@ -4625,42 +4565,6 @@ proto.mt4_term_api.ConnectByTokenRequest.serializeBinaryToWriter = function(mess
       f
     );
   }
-};
-
-
-/**
- * optional string base_chart_symbol = 1;
- * @return {string}
- */
-proto.mt4_term_api.ConnectByTokenRequest.prototype.getBaseChartSymbol = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.mt4_term_api.ConnectByTokenRequest} returns this
- */
-proto.mt4_term_api.ConnectByTokenRequest.prototype.setBaseChartSymbol = function(value) {
-  return jspb.Message.setField(this, 1, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.mt4_term_api.ConnectByTokenRequest} returns this
- */
-proto.mt4_term_api.ConnectByTokenRequest.prototype.clearBaseChartSymbol = function() {
-  return jspb.Message.setField(this, 1, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.mt4_term_api.ConnectByTokenRequest.prototype.hasBaseChartSymbol = function() {
-  return jspb.Message.getField(this, 1) != null;
 };
 
 
