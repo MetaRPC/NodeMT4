@@ -117,6 +117,28 @@ function deserialize_mt4_term_api_OpenTerminalChartWithEaRequest(buffer_arg) {
   return mt4$term$api$charts_pb.OpenTerminalChartWithEaRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_mt4_term_api_StartEaReply(arg) {
+  if (!(arg instanceof mt4$term$api$charts_pb.StartEaReply)) {
+    throw new Error('Expected argument of type mt4_term_api.StartEaReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_StartEaReply(buffer_arg) {
+  return mt4$term$api$charts_pb.StartEaReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mt4_term_api_StartEaRequest(arg) {
+  if (!(arg instanceof mt4$term$api$charts_pb.StartEaRequest)) {
+    throw new Error('Expected argument of type mt4_term_api.StartEaRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_StartEaRequest(buffer_arg) {
+  return mt4$term$api$charts_pb.StartEaRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_mt4_term_api_StopEaReply(arg) {
   if (!(arg instanceof mt4$term$api$charts_pb.StopEaReply)) {
     throw new Error('Expected argument of type mt4_term_api.StopEaReply');
@@ -206,6 +228,17 @@ var ChartsService = exports.ChartsService = {
     requestDeserialize: deserialize_mt4_term_api_StopEaRequest,
     responseSerialize: serialize_mt4_term_api_StopEaReply,
     responseDeserialize: deserialize_mt4_term_api_StopEaReply,
+  },
+  startEa: {
+    path: '/mt4_term_api.Charts/StartEa',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$charts_pb.StartEaRequest,
+    responseType: mt4$term$api$charts_pb.StartEaReply,
+    requestSerialize: serialize_mt4_term_api_StartEaRequest,
+    requestDeserialize: deserialize_mt4_term_api_StartEaRequest,
+    responseSerialize: serialize_mt4_term_api_StartEaReply,
+    responseDeserialize: deserialize_mt4_term_api_StartEaReply,
   },
 };
 
