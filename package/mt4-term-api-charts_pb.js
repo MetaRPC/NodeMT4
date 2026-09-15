@@ -3980,7 +3980,10 @@ proto.mt4_term_api.RunningEaInfo.toObject = function(includeInstance, msg) {
     eaRamBytes: jspb.Message.getFieldWithDefault(msg, 13, 0),
     refRamBytes: jspb.Message.getFieldWithDefault(msg, 14, 0),
     ramRatio: jspb.Message.getFloatingPointFieldWithDefault(msg, 15, 0.0),
-    resourceMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 16, 0.0)
+    resourceMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 16, 0.0),
+    meteredHours: jspb.Message.getFloatingPointFieldWithDefault(msg, 17, 0.0),
+    chargedAmount: jspb.Message.getFloatingPointFieldWithDefault(msg, 18, 0.0),
+    stoppedAt: (f = msg.getStoppedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -4081,6 +4084,19 @@ proto.mt4_term_api.RunningEaInfo.deserializeBinaryFromReader = function(msg, rea
     case 16:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setResourceMultiplier(value);
+      break;
+    case 17:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setMeteredHours(value);
+      break;
+    case 18:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setChargedAmount(value);
+      break;
+    case 19:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setStoppedAt(value);
       break;
     default:
       reader.skipField();
@@ -4222,6 +4238,28 @@ proto.mt4_term_api.RunningEaInfo.serializeBinaryToWriter = function(message, wri
     writer.writeDouble(
       16,
       f
+    );
+  }
+  f = message.getMeteredHours();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      17,
+      f
+    );
+  }
+  f = message.getChargedAmount();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      18,
+      f
+    );
+  }
+  f = message.getStoppedAt();
+  if (f != null) {
+    writer.writeMessage(
+      19,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
 };
@@ -4531,6 +4569,79 @@ proto.mt4_term_api.RunningEaInfo.prototype.getResourceMultiplier = function() {
  */
 proto.mt4_term_api.RunningEaInfo.prototype.setResourceMultiplier = function(value) {
   return jspb.Message.setProto3FloatField(this, 16, value);
+};
+
+
+/**
+ * optional double metered_hours = 17;
+ * @return {number}
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.getMeteredHours = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 17, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.RunningEaInfo} returns this
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.setMeteredHours = function(value) {
+  return jspb.Message.setProto3FloatField(this, 17, value);
+};
+
+
+/**
+ * optional double charged_amount = 18;
+ * @return {number}
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.getChargedAmount = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 18, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.RunningEaInfo} returns this
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.setChargedAmount = function(value) {
+  return jspb.Message.setProto3FloatField(this, 18, value);
+};
+
+
+/**
+ * optional google.protobuf.Timestamp stopped_at = 19;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.getStoppedAt = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 19));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.RunningEaInfo} returns this
+*/
+proto.mt4_term_api.RunningEaInfo.prototype.setStoppedAt = function(value) {
+  return jspb.Message.setWrapperField(this, 19, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.RunningEaInfo} returns this
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.clearStoppedAt = function() {
+  return this.setStoppedAt(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.RunningEaInfo.prototype.hasStoppedAt = function() {
+  return jspb.Message.getField(this, 19) != null;
 };
 
 
