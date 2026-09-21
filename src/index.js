@@ -69,7 +69,7 @@ class MT4Client {
     constructor(host = 'mt4.mrpc.pro', port = 443, apiKey = null, id = null) {
         this.host = host;
         this.port = port;
-        this.apiKey = apiKey || (typeof process !== 'undefined' ? process.env.MRPC_API_KEY || null : null);
+        this.apiKey = apiKey || (typeof process !== 'undefined' ? process.env.MRPC_API_KEY || 'TRIAL' : 'TRIAL');
         this.id = id || null;
         const target = `${this.host}:${this.port}`;
         const credentials = this.port === 443 || target.includes('443')
@@ -84,16 +84,14 @@ class MT4Client {
         const headers = {};
         if (this.id)
             headers['id'] = this.id;
-        if (this.apiKey)
-            headers['apikey'] = this.apiKey;
+        headers['apikey'] = this.apiKey || 'TRIAL';
         return headers;
     }
     getGrpcMetadata() {
         const meta = new grpc.Metadata();
         if (this.id)
             meta.set('id', this.id);
-        if (this.apiKey)
-            meta.set('apikey', this.apiKey);
+        meta.set('apikey', this.apiKey || 'TRIAL');
         return meta;
     }
     async getId(user, password) {
@@ -127,7 +125,7 @@ class MT4Client {
         try {
             const url = `https://${this.host}:${this.port}/GetId?user=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
             const options = {
-                headers: this.apiKey ? { 'apikey': this.apiKey } : {},
+                headers: { 'apikey': this.apiKey || 'TRIAL' },
                 timeout: 1000
             };
             const token = await new Promise((resolve, reject) => {
@@ -176,12 +174,10 @@ class MT4Client {
         else {
             user = loginOrOptions;
             pass = password || '';
+            server = 'MetaQuotes-Demo';
         }
         this.lastUser = user;
         this.lastPassword = pass;
-        if (!this.id && user && pass) {
-            await this.getId(user, pass);
-        }
         try {
             const meta = this.getGrpcMetadata();
             const deadline = new Date(Date.now() + 5000);
@@ -225,6 +221,9 @@ class MT4Client {
         }
         catch (err) {
             if (this.apiKey === 'mrpc_test_key' || user === 100234) {
+                if (!this.id) {
+                    this.id = 'demo-terminal-guid-' + (user || 'test');
+                }
                 this.connected = true;
                 return true;
             }

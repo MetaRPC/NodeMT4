@@ -37,7 +37,7 @@ Create your main application file and paste the following snippet:
 ```
 import { MT4Account } from '@metarpc/mt4';
 
-// Account ID generation (GetId) and authentication are handled automatically
+// Session ID generation on Connect and authentication are handled automatically
 const account = new MT4Account({ user, password, server: grpcServer, apiKey });
 await account.connectByServerName(serverName, 'EURUSD', 30);
 const summary = await account.accountSummary();
