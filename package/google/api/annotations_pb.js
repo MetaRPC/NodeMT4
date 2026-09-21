@@ -21,7 +21,7 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
-var google_api_http_pb = require('../../../google/api/http_pb.js');
+var google_api_http_pb = require('./http_pb.js');
 goog.object.extend(proto, google_api_http_pb);
 var google_protobuf_descriptor_pb = require('google-protobuf/google/protobuf/descriptor_pb.js');
 goog.object.extend(proto, google_protobuf_descriptor_pb);

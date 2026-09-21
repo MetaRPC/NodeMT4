@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "types": "src/index.ts",
   "scripts": {
+    "build": "tsc",
     "test": "node --test tests/*.test.js",
     "example": "node examples/quickstart.js"
   },
@@ -23,9 +24,14 @@
     "url": "https://github.com/MetaRPC/NodeMT4.git"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.12.0",
+    "google-protobuf": "^3.21.4",
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/google-protobuf": "^3.15.12",
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.12",
     "typescript": "^5.0.0"
   }
 }
