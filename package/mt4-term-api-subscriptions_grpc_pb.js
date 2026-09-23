@@ -98,7 +98,7 @@ function deserialize_mt4_term_api_OnTradeRequest(buffer_arg) {
 
 var SubscriptionServiceService = exports.SubscriptionServiceService = {
   // Streams real-time order/trade events.
-// Requires 'id' header — use GetId to generate.
+// Requires 'id' header returned by Connect/ConnectEx.
 // Swagger does not support streaming — use /subscription-stream interactive viewer.
 onTrade: {
     path: '/mt4_term_api.SubscriptionService/OnTrade',
@@ -112,7 +112,7 @@ onTrade: {
     responseDeserialize: deserialize_mt4_term_api_OnTradeReply,
   },
   // Streams the tickets of currently opened orders as they change.
-// Requires 'id' header — use GetId to generate.
+// Requires 'id' header returned by Connect/ConnectEx.
 // Swagger does not support streaming — use /subscription-stream interactive viewer.
 onOpenedOrdersTickets: {
     path: '/mt4_term_api.SubscriptionService/OnOpenedOrdersTickets',
@@ -126,7 +126,7 @@ onOpenedOrdersTickets: {
     responseDeserialize: deserialize_mt4_term_api_OnOpenedOrdersTicketsReply,
   },
   // Streams the live profit of currently opened orders.
-// Requires 'id' header — use GetId to generate.
+// Requires 'id' header returned by Connect/ConnectEx.
 // Swagger does not support streaming — use /subscription-stream interactive viewer.
 onOpenedOrdersProfit: {
     path: '/mt4_term_api.SubscriptionService/OnOpenedOrdersProfit',
@@ -140,7 +140,7 @@ onOpenedOrdersProfit: {
     responseDeserialize: deserialize_mt4_term_api_OnOpenedOrdersProfitReply,
   },
   // Streams real-time ticks for the given symbols.
-// Requires 'id' header — use GetId to generate.
+// Requires 'id' header returned by Connect/ConnectEx.
 // Swagger does not support streaming — use /subscription-stream interactive viewer.
 // [DefaultValues]
 // {
