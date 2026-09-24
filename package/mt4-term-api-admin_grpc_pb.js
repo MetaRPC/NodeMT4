@@ -171,6 +171,17 @@ function deserialize_mrpc_admin_GetSessionRestoreStatusReply(buffer_arg) {
   return mt4$term$api$admin_pb.GetSessionRestoreStatusReply.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_mrpc_admin_KillAllTrialTerminalsReply(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.KillAllTrialTerminalsReply)) {
+    throw new Error('Expected argument of type mrpc_admin.KillAllTrialTerminalsReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_KillAllTrialTerminalsReply(buffer_arg) {
+  return mt4$term$api$admin_pb.KillAllTrialTerminalsReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_mrpc_admin_ListLogFilesReply(arg) {
   if (!(arg instanceof mt4$term$api$admin_pb.ListLogFilesReply)) {
     throw new Error('Expected argument of type mrpc_admin.ListLogFilesReply');
@@ -414,6 +425,31 @@ getSessionRestoreStatus: {
     requestDeserialize: deserialize_mrpc_admin_ActiveTerminalsRequest,
     responseSerialize: serialize_mrpc_admin_GetSessionRestoreStatusReply,
     responseDeserialize: deserialize_mrpc_admin_GetSessionRestoreStatusReply,
+  },
+  // Kills all active trial terminals across ALL pods of this StatefulSet/Deployment
+// and marks them stopped in database.
+killAllTrialTerminals: {
+    path: '/mrpc_admin.AdminApi/KillAllTrialTerminals',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$admin_pb.ActiveTerminalsRequest,
+    responseType: mt4$term$api$admin_pb.KillAllTrialTerminalsReply,
+    requestSerialize: serialize_mrpc_admin_ActiveTerminalsRequest,
+    requestDeserialize: deserialize_mrpc_admin_ActiveTerminalsRequest,
+    responseSerialize: serialize_mrpc_admin_KillAllTrialTerminalsReply,
+    responseDeserialize: deserialize_mrpc_admin_KillAllTrialTerminalsReply,
+  },
+  // Kills all active trial terminals on THIS pod.
+killAllTrialTerminalsLocal: {
+    path: '/mrpc_admin.AdminApi/KillAllTrialTerminalsLocal',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$admin_pb.ActiveTerminalsRequest,
+    responseType: mt4$term$api$admin_pb.KillAllTrialTerminalsReply,
+    requestSerialize: serialize_mrpc_admin_ActiveTerminalsRequest,
+    requestDeserialize: deserialize_mrpc_admin_ActiveTerminalsRequest,
+    responseSerialize: serialize_mrpc_admin_KillAllTrialTerminalsReply,
+    responseDeserialize: deserialize_mrpc_admin_KillAllTrialTerminalsReply,
   },
 };
 
