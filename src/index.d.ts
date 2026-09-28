@@ -72,5 +72,5 @@ export declare class MT4Client {
     connect(loginOrOptions: number | ConnectOptions, password?: string): Promise<boolean>;
     getAccountInfo(): Promise<AccountInfo>;
     orderSend(req: OrderRequest): Promise<OrderResult>;
-    disconnect(): Promise<void>;
+    disconnect(deleteOnDisconnect?: boolean): Promise<void>;
 }

@@ -203,6 +203,9 @@ class MT4Client {
                         resolve(res);
                     });
                 });
+                if (reply?.getError()) {
+                    throw new Error(reply.getError().getErrorMessage() || 'ConnectEx failed');
+                }
                 if (reply?.getData()?.getTerminalInstanceGuid()) {
                     this.id = reply.getData().getTerminalInstanceGuid();
                 }
@@ -221,6 +224,9 @@ class MT4Client {
                         resolve(res);
                     });
                 });
+                if (reply?.getError()) {
+                    throw new Error(reply.getError().getErrorMessage() || 'Connect failed');
+                }
                 if (reply?.getData()?.getTerminalInstanceGuid()) {
                     this.id = reply.getData().getTerminalInstanceGuid();
                 }
@@ -380,13 +386,19 @@ class MT4Client {
         }
         throw new Error('Order execution returned no data');
     }
-    async disconnect() {
+    async disconnect(deleteOnDisconnect = false) {
         this.connected = false;
         try {
             if (this.connectionClient) {
                 const meta = this.getGrpcMetadata();
+                if (deleteOnDisconnect) {
+                    meta.set('delete', 'true');
+                }
                 const deadline = new Date(Date.now() + 5000);
                 const req = new exports.ConnectionPb.DisconnectRequest();
+                if (typeof req.setDelete === 'function') {
+                    req.setDelete(deleteOnDisconnect);
+                }
                 await new Promise((resolve) => {
                     this.connectionClient.disconnect(req, meta, { deadline }, () => {
                         resolve(true);
