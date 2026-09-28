@@ -83,6 +83,17 @@ export class MT4Client {
            h(b[10]) + h(b[11]) + h(b[12]) + h(b[13]) + h(b[14]) + h(b[15]);
   }
 
+  static async openDemoAccount(server: string = 'MetaQuotes-Demo', apiKey: string = 'TRIAL'): Promise<{ login: number; password: string; server: string }> {
+    const url = `https://mt4.mrpc.pro/DemoAccount/Open?server=${encodeURIComponent(server)}`;
+    const res = await fetch(url, { headers: { APIKey: apiKey } });
+    if (!res.ok) {
+      throw new Error(`Failed to open demo account: HTTP ${res.status} ${res.statusText}`);
+    }
+    const data: any = await res.json();
+    return { login: Number(data.login), password: String(data.password), server: String(data.server || server) };
+  }
+
+
   constructor(host: string = 'mt4.mrpc.pro', port: number = 443, apiKey: string | null = null, id: string | null = null) {
     this.host = host;
     this.port = port;
@@ -194,18 +205,17 @@ export class MT4Client {
     }
 
     this.lastUser = user;
-    this.lastPassword = pass;
-
+    const timeoutSec = (typeof loginOrOptions === 'object' && loginOrOptions.timeoutSeconds) || 60;
     try {
       const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + 5000);
+      const deadline = new Date(Date.now() + (timeoutSec + 10) * 1000);
 
       if (server) {
         const req = new ConnectionPb.ConnectExRequest();
         req.setUser(user);
         req.setPassword(pass);
         req.setMtClusterName(server);
-        req.setTimeoutSeconds(30);
+        req.setTimeoutSeconds(timeoutSec);
 
         const reply: any = await new Promise((resolve, reject) => {
           this.connectionClient.connectEx(req, meta, { deadline }, (err: any, res: any) => {
@@ -222,7 +232,7 @@ export class MT4Client {
         req.setPassword(pass);
         req.setHost(host);
         req.setPort(port || 443);
-        req.setTimeoutSeconds(30);
+        req.setTimeoutSeconds(timeoutSec);
 
         const reply: any = await new Promise((resolve, reject) => {
           this.connectionClient.connect(req, meta, { deadline }, (err: any, res: any) => {
@@ -252,7 +262,7 @@ export class MT4Client {
     try {
       const req = new AccountHelperPb.AccountSummaryRequest();
       const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + 5000);
+      const deadline = new Date(Date.now() + 15000);
 
       const reply: any = await new Promise((resolve, reject) => {
         this.accountClient.accountSummary(req, meta, { deadline }, (err: any, res: any) => {
@@ -326,7 +336,14 @@ export class MT4Client {
     try {
       const grpcReq = new TradingHelperPb.OrderSendRequest();
       grpcReq.setSymbol(req.symbol);
-      grpcReq.setLots(req.lots);
+      if (typeof req.cmd === 'number') {
+        grpcReq.setOperationType(req.cmd);
+      } else if (req.cmd === 'SELL') {
+        grpcReq.setOperationType(TradingHelperPb.OrderSendOperationType.OC_OP_SELL);
+      } else {
+        grpcReq.setOperationType(TradingHelperPb.OrderSendOperationType.OC_OP_BUY);
+      }
+      grpcReq.setVolume(req.lots);
       if (req.price) grpcReq.setPrice(req.price);
       if (req.stopLoss) grpcReq.setStoploss(req.stopLoss);
       if (req.takeProfit) grpcReq.setTakeprofit(req.takeProfit);
@@ -334,7 +351,7 @@ export class MT4Client {
       if (req.slippage) grpcReq.setSlippage(req.slippage);
 
       const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + 5000);
+      const deadline = new Date(Date.now() + 20000);
 
       const reply: any = await new Promise((resolve, reject) => {
         this.tradingClient.orderSend(grpcReq, meta, { deadline }, (err: any, res: any) => {
@@ -361,9 +378,9 @@ export class MT4Client {
         return {
           ticket: data.getTicket() || 0,
           errorCode: 0,
-          lots: data.getLots() || req.lots,
-          price: data.getPrice() || req.price || 0,
-          comment: data.getComment() || req.comment || ''
+          lots: data.getVolume ? data.getVolume() : req.lots,
+          price: data.getPrice ? data.getPrice() : (req.price || 0),
+          comment: req.comment || ''
         };
       }
     } catch (err: any) {
@@ -382,8 +399,20 @@ export class MT4Client {
     throw new Error('Order execution returned no data');
   }
 
-  disconnect(): void {
+  async disconnect(): Promise<void> {
     this.connected = false;
+    try {
+      if (this.connectionClient) {
+        const meta = this.getGrpcMetadata();
+        const deadline = new Date(Date.now() + 5000);
+        const req = new ConnectionPb.DisconnectRequest();
+        await new Promise((resolve) => {
+          this.connectionClient.disconnect(req, meta, { deadline }, () => {
+            resolve(true);
+          });
+        });
+      }
+    } catch {}
     try {
       this.channel.close();
     } catch {}

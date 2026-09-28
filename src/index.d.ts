@@ -60,6 +60,11 @@ export declare class MT4Client {
     private lastUser?;
     private lastPassword?;
     static computeDeterministicId(user: number | string, password: string): string;
+    static openDemoAccount(server?: string, apiKey?: string): Promise<{
+        login: number;
+        password: string;
+        server: string;
+    }>;
     constructor(host?: string, port?: number, apiKey?: string | null, id?: string | null);
     getHeaders(): Record<string, string>;
     getGrpcMetadata(): grpc.Metadata;
@@ -67,5 +72,5 @@ export declare class MT4Client {
     connect(loginOrOptions: number | ConnectOptions, password?: string): Promise<boolean>;
     getAccountInfo(): Promise<AccountInfo>;
     orderSend(req: OrderRequest): Promise<OrderResult>;
-    disconnect(): void;
+    disconnect(): Promise<void>;
 }
