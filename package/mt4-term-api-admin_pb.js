@@ -4282,7 +4282,12 @@ proto.mrpc_admin.VersionReply.toObject = function(includeInstance, msg) {
     service: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
     buildTimeUtc: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    mode: jspb.Message.getFieldWithDefault(msg, 4, "")
+    mode: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    sessionCreation: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    sessionCreationConsecutiveFailures: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    sessionCreationLastError: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    sessionCreationLastSuccessUtc: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    sessionCreationUnhealthySinceUtc: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -4334,6 +4339,26 @@ proto.mrpc_admin.VersionReply.deserializeBinaryFromReader = function(msg, reader
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setMode(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSessionCreation(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setSessionCreationConsecutiveFailures(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSessionCreationLastError(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSessionCreationLastSuccessUtc(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSessionCreationUnhealthySinceUtc(value);
       break;
     default:
       reader.skipField();
@@ -4389,6 +4414,41 @@ proto.mrpc_admin.VersionReply.serializeBinaryToWriter = function(message, writer
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getSessionCreation();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = message.getSessionCreationConsecutiveFailures();
+  if (f !== 0) {
+    writer.writeUint32(
+      6,
+      f
+    );
+  }
+  f = message.getSessionCreationLastError();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
+      f
+    );
+  }
+  f = message.getSessionCreationLastSuccessUtc();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getSessionCreationUnhealthySinceUtc();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -4464,6 +4524,96 @@ proto.mrpc_admin.VersionReply.prototype.getMode = function() {
  */
 proto.mrpc_admin.VersionReply.prototype.setMode = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string session_creation = 5;
+ * @return {string}
+ */
+proto.mrpc_admin.VersionReply.prototype.getSessionCreation = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mrpc_admin.VersionReply} returns this
+ */
+proto.mrpc_admin.VersionReply.prototype.setSessionCreation = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional uint32 session_creation_consecutive_failures = 6;
+ * @return {number}
+ */
+proto.mrpc_admin.VersionReply.prototype.getSessionCreationConsecutiveFailures = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mrpc_admin.VersionReply} returns this
+ */
+proto.mrpc_admin.VersionReply.prototype.setSessionCreationConsecutiveFailures = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional string session_creation_last_error = 7;
+ * @return {string}
+ */
+proto.mrpc_admin.VersionReply.prototype.getSessionCreationLastError = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mrpc_admin.VersionReply} returns this
+ */
+proto.mrpc_admin.VersionReply.prototype.setSessionCreationLastError = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional string session_creation_last_success_utc = 8;
+ * @return {string}
+ */
+proto.mrpc_admin.VersionReply.prototype.getSessionCreationLastSuccessUtc = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mrpc_admin.VersionReply} returns this
+ */
+proto.mrpc_admin.VersionReply.prototype.setSessionCreationLastSuccessUtc = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string session_creation_unhealthy_since_utc = 9;
+ * @return {string}
+ */
+proto.mrpc_admin.VersionReply.prototype.getSessionCreationUnhealthySinceUtc = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mrpc_admin.VersionReply} returns this
+ */
+proto.mrpc_admin.VersionReply.prototype.setSessionCreationUnhealthySinceUtc = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
