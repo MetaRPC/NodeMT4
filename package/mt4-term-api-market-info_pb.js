@@ -801,6 +801,7 @@ proto.mt4_term_api.QuoteData.toObject = function(includeInstance, msg) {
     bid: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
     ask: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     dateTime: (f = msg.getDateTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    dateTimeUtc: (f = msg.getDateTimeUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     high: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0),
     low: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0)
   };
@@ -855,6 +856,11 @@ proto.mt4_term_api.QuoteData.deserializeBinaryFromReader = function(msg, reader)
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setDateTime(value);
+      break;
+    case 7:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setDateTimeUtc(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readDouble());
@@ -918,6 +924,14 @@ proto.mt4_term_api.QuoteData.serializeBinaryToWriter = function(message, writer)
   if (f != null) {
     writer.writeMessage(
       4,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getDateTimeUtc();
+  if (f != null) {
+    writer.writeMessage(
+      7,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -1027,6 +1041,43 @@ proto.mt4_term_api.QuoteData.prototype.clearDateTime = function() {
  */
 proto.mt4_term_api.QuoteData.prototype.hasDateTime = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp date_time_utc = 7;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.QuoteData.prototype.getDateTimeUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 7));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.QuoteData} returns this
+*/
+proto.mt4_term_api.QuoteData.prototype.setDateTimeUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 7, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.QuoteData} returns this
+ */
+proto.mt4_term_api.QuoteData.prototype.clearDateTimeUtc = function() {
+  return this.setDateTimeUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.QuoteData.prototype.hasDateTimeUtc = function() {
+  return jspb.Message.getField(this, 7) != null;
 };
 
 
@@ -2294,7 +2345,9 @@ proto.mt4_term_api.QuoteHistoryRequest.toObject = function(includeInstance, msg)
     symbol: jspb.Message.getFieldWithDefault(msg, 1, ""),
     timeframe: jspb.Message.getFieldWithDefault(msg, 2, 0),
     fromtime: (f = msg.getFromtime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    totime: (f = msg.getTotime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    fromtimeutc: (f = msg.getFromtimeutc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    totime: (f = msg.getTotime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    totimeutc: (f = msg.getTotimeutc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2344,10 +2397,20 @@ proto.mt4_term_api.QuoteHistoryRequest.deserializeBinaryFromReader = function(ms
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setFromtime(value);
       break;
+    case 5:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setFromtimeutc(value);
+      break;
     case 4:
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setTotime(value);
+      break;
+    case 6:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setTotimeutc(value);
       break;
     default:
       reader.skipField();
@@ -2400,10 +2463,26 @@ proto.mt4_term_api.QuoteHistoryRequest.serializeBinaryToWriter = function(messag
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
   }
+  f = message.getFromtimeutc();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
   f = message.getTotime();
   if (f != null) {
     writer.writeMessage(
       4,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getTotimeutc();
+  if (f != null) {
+    writer.writeMessage(
+      6,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -2485,6 +2564,43 @@ proto.mt4_term_api.QuoteHistoryRequest.prototype.hasFromtime = function() {
 
 
 /**
+ * optional google.protobuf.Timestamp fromTimeUtc = 5;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.getFromtimeutc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 5));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.QuoteHistoryRequest} returns this
+*/
+proto.mt4_term_api.QuoteHistoryRequest.prototype.setFromtimeutc = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.QuoteHistoryRequest} returns this
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.clearFromtimeutc = function() {
+  return this.setFromtimeutc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.hasFromtimeutc = function() {
+  return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
  * optional google.protobuf.Timestamp toTime = 4;
  * @return {?proto.google.protobuf.Timestamp}
  */
@@ -2518,6 +2634,43 @@ proto.mt4_term_api.QuoteHistoryRequest.prototype.clearTotime = function() {
  */
 proto.mt4_term_api.QuoteHistoryRequest.prototype.hasTotime = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp toTimeUtc = 6;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.getTotimeutc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 6));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.QuoteHistoryRequest} returns this
+*/
+proto.mt4_term_api.QuoteHistoryRequest.prototype.setTotimeutc = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.QuoteHistoryRequest} returns this
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.clearTotimeutc = function() {
+  return this.setTotimeutc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.QuoteHistoryRequest.prototype.hasTotimeutc = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 
@@ -2944,6 +3097,7 @@ proto.mt4_term_api.HistoryQuote.toObject = function(includeInstance, msg) {
     symbol: jspb.Message.getFieldWithDefault(msg, 1, ""),
     index: jspb.Message.getFieldWithDefault(msg, 2, 0),
     time: (f = msg.getTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    timeUtc: (f = msg.getTimeUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     open: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
     close: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0),
     high: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0),
@@ -2999,6 +3153,11 @@ proto.mt4_term_api.HistoryQuote.deserializeBinaryFromReader = function(msg, read
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setTime(value);
+      break;
+    case 11:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setTimeUtc(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readDouble());
@@ -3075,6 +3234,14 @@ proto.mt4_term_api.HistoryQuote.serializeBinaryToWriter = function(message, writ
   if (f != null) {
     writer.writeMessage(
       3,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getTimeUtc();
+  if (f != null) {
+    writer.writeMessage(
+      11,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -3201,6 +3368,43 @@ proto.mt4_term_api.HistoryQuote.prototype.clearTime = function() {
  */
 proto.mt4_term_api.HistoryQuote.prototype.hasTime = function() {
   return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp time_utc = 11;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.HistoryQuote.prototype.getTimeUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 11));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.HistoryQuote} returns this
+*/
+proto.mt4_term_api.HistoryQuote.prototype.setTimeUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 11, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.HistoryQuote} returns this
+ */
+proto.mt4_term_api.HistoryQuote.prototype.clearTimeUtc = function() {
+  return this.setTimeUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.HistoryQuote.prototype.hasTimeUtc = function() {
+  return jspb.Message.getField(this, 11) != null;
 };
 
 

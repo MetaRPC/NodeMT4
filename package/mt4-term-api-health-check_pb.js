@@ -243,7 +243,8 @@ proto.mt4_term_api.HealthCheckReply.prototype.toObject = function(opt_includeIns
 proto.mt4_term_api.HealthCheckReply.toObject = function(includeInstance, msg) {
   var f, obj = {
     connected: jspb.Message.getBooleanFieldWithDefault(msg, 1, false),
-    servertimemsc: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    servertimemsc: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    servertimemscutc: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -288,6 +289,10 @@ proto.mt4_term_api.HealthCheckReply.deserializeBinaryFromReader = function(msg, 
       var value = /** @type {number} */ (reader.readInt64());
       msg.setServertimemsc(value);
       break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setServertimemscutc(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -331,6 +336,13 @@ proto.mt4_term_api.HealthCheckReply.serializeBinaryToWriter = function(message, 
       f
     );
   }
+  f = message.getServertimemscutc();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -367,6 +379,24 @@ proto.mt4_term_api.HealthCheckReply.prototype.getServertimemsc = function() {
  */
 proto.mt4_term_api.HealthCheckReply.prototype.setServertimemsc = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 serverTimeMscUtc = 3;
+ * @return {number}
+ */
+proto.mt4_term_api.HealthCheckReply.prototype.getServertimemscutc = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.HealthCheckReply} returns this
+ */
+proto.mt4_term_api.HealthCheckReply.prototype.setServertimemscutc = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

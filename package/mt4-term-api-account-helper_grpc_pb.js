@@ -201,7 +201,9 @@ symbolParamsMany: {
     responseSerialize: serialize_mt4_term_api_SymbolParamsManyReply,
     responseDeserialize: deserialize_mt4_term_api_SymbolParamsManyReply,
   },
-  tickValueWithSize: {
+  // Tick value as array. Name the symbols (symbolNames); with no names the reply covers the
+// symbols currently in Market Watch, never the whole server list.
+tickValueWithSize: {
     path: '/mt4_term_api.AccountHelper/TickValueWithSize',
     requestStream: false,
     responseStream: false,

@@ -1581,7 +1581,8 @@ proto.mt4_term_api.ChartTemplateMode = {
   ON_TRADE: 0,
   ON_OPENED_ORDERS_TICKETS: 1,
   ON_ORDER_PROFIT: 2,
-  ON_SYMBOL_INFO_TICK: 3
+  ON_SYMBOL_INFO_TICK: 3,
+  EVENTS: 4
 };
 
 goog.object.extend(exports, proto.mt4_term_api);
