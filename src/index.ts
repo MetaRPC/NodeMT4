@@ -1,6 +1,4 @@
 import * as grpc from '@grpc/grpc-js';
-import * as crypto from 'crypto';
-import * as https from 'https';
 
 // Low-level gRPC and Protobuf bindings
 export const ConnectionGrpc = require('../package/mt4-term-api-connection_grpc_pb');
@@ -9,16 +7,19 @@ export const AccountHelperGrpc = require('../package/mt4-term-api-account-helper
 export const AccountHelperPb = require('../package/mt4-term-api-account-helper_pb');
 export const TradingHelperGrpc = require('../package/mt4-term-api-trading-helper_grpc_pb');
 export const TradingHelperPb = require('../package/mt4-term-api-trading-helper_pb');
+export const SubscriptionsGrpc = require('../package/mt4-term-api-subscriptions_grpc_pb');
+export const SubscriptionsPb = require('../package/mt4-term-api-subscriptions_pb');
+export const MarketInfoGrpc = require('../package/mt4-term-api-market-info_grpc_pb');
+export const MarketInfoPb = require('../package/mt4-term-api-market-info_pb');
 
 export interface AccountInfo {
   login: number;
   currency: string;
   balance: number;
   equity: number;
-  margin: number;
-  freeMargin: number;
   leverage: number;
   name: string;
+  /** The broker server name the account was connected with (e.g. "TeleTrade-Demo"). */
   server: string;
 }
 
@@ -26,25 +27,31 @@ export interface Quote {
   symbol: string;
   bid: number;
   ask: number;
+  /** Tick time, milliseconds since the epoch (UTC). */
   time: number;
 }
 
+export type OrderCommand = 'BUY' | 'SELL' | 'BUY_LIMIT' | 'SELL_LIMIT' | 'BUY_STOP' | 'SELL_STOP';
+
 export interface OrderRequest {
   symbol: string;
-  cmd: 'BUY' | 'SELL' | 'BUY_LIMIT' | 'SELL_LIMIT' | 'BUY_STOP' | 'SELL_STOP';
+  cmd: OrderCommand;
   lots: number;
   price?: number;
   slippage?: number;
   stopLoss?: number;
   takeProfit?: number;
   comment?: string;
+  magicNumber?: number;
 }
 
 export interface OrderResult {
   ticket: number;
+  /** Always 0: an order the server refuses is an MrpcError. */
   errorCode: number;
   price: number;
   lots: number;
+  /** The comment the order was sent with. */
   comment: string;
 }
 
@@ -57,6 +64,23 @@ export interface ConnectOptions {
   timeoutSeconds?: number;
 }
 
+/** An error the MRPC API answered with (the reply's `error`), or a failed call. */
+export class MrpcError extends Error {
+  constructor(message: string, public readonly code: string = '') {
+    super(code ? `${code}: ${message}` : message);
+    this.name = 'MrpcError';
+  }
+}
+
+const ORDER_TYPES: Record<OrderCommand, number> = {
+  BUY: TradingHelperPb.OrderSendOperationType.OC_OP_BUY,
+  SELL: TradingHelperPb.OrderSendOperationType.OC_OP_SELL,
+  BUY_LIMIT: TradingHelperPb.OrderSendOperationType.OC_OP_BUYLIMIT,
+  SELL_LIMIT: TradingHelperPb.OrderSendOperationType.OC_OP_SELLLIMIT,
+  BUY_STOP: TradingHelperPb.OrderSendOperationType.OC_OP_BUYSTOP,
+  SELL_STOP: TradingHelperPb.OrderSendOperationType.OC_OP_SELLSTOP,
+};
+
 export class MT4Client {
   public host: string;
   public port: number;
@@ -68,31 +92,28 @@ export class MT4Client {
   public connectionClient: any;
   public accountClient: any;
   public tradingClient: any;
+  public subscriptionClient: any;
+  public marketInfoClient: any;
 
-  private lastUser?: number;
-  private lastPassword?: string;
+  private lastServer?: string;
 
-  static computeDeterministicId(user: number | string, password: string): string {
-    const hash = crypto.createHash('sha256').update(`${user}:${password}`).digest();
-    const b = hash.subarray(0, 16);
-    const h = (n: number) => n.toString(16).padStart(2, '0');
-    return h(b[3]) + h(b[2]) + h(b[1]) + h(b[0]) + '-' +
-           h(b[5]) + h(b[4]) + '-' +
-           h(b[7]) + h(b[6]) + '-' +
-           h(b[8]) + h(b[9]) + '-' +
-           h(b[10]) + h(b[11]) + h(b[12]) + h(b[13]) + h(b[14]) + h(b[15]);
-  }
-
-  static async openDemoAccount(server: string = 'MetaQuotes-Demo', apiKey: string = 'TRIAL'): Promise<{ login: number; password: string; server: string }> {
-    const url = `https://mt4.mrpc.pro/DemoAccount/Open?server=${encodeURIComponent(server)}`;
+  /**
+   * Opens a new demo account through the API (GET /DemoAccount/Open) and returns its credentials.
+   * @param host the REST host of the platform, e.g. "mt4.mrpc.pro"
+   */
+  static async openDemoAccount(server: string = 'MetaQuotes-Demo', apiKey: string = 'TRIAL', host: string = 'mt4.mrpc.pro'): Promise<{ login: number; password: string; server: string }> {
+    const url = `https://${host}/DemoAccount/Open?server=${encodeURIComponent(server)}`;
     const res = await fetch(url, { headers: { APIKey: apiKey } });
     if (!res.ok) {
-      throw new Error(`Failed to open demo account: HTTP ${res.status} ${res.statusText}`);
+      throw new MrpcError(`Failed to open demo account: HTTP ${res.status} ${res.statusText}`);
     }
     const data: any = await res.json();
-    return { login: Number(data.login), password: String(data.password), server: String(data.server || server) };
+    const body = data.data || data;
+    if (data.error || !body.login) {
+      throw new MrpcError(data.error?.errorMessage || `No account opened (result code ${body.resultCode})`, data.error?.errorCode || '');
+    }
+    return { login: Number(body.login), password: String(body.password), server: String(body.server || server) };
   }
-
 
   constructor(host: string = 'mt4.mrpc.pro', port: number = 443, apiKey: string | null = null, id: string | null = null) {
     this.host = host;
@@ -101,14 +122,16 @@ export class MT4Client {
     this.id = id || null;
 
     const target = `${this.host}:${this.port}`;
-    const credentials = this.port === 443 || target.includes('443') 
-      ? grpc.credentials.createSsl() 
+    const credentials = this.port === 443
+      ? grpc.credentials.createSsl()
       : grpc.credentials.createInsecure();
 
     this.channel = new grpc.Channel(target, credentials, {});
     this.connectionClient = new ConnectionGrpc.ConnectionClient(target, credentials);
     this.accountClient = new AccountHelperGrpc.AccountHelperClient(target, credentials);
     this.tradingClient = new TradingHelperGrpc.TradingHelperClient(target, credentials);
+    this.subscriptionClient = new SubscriptionsGrpc.SubscriptionServiceClient(target, credentials);
+    this.marketInfoClient = new MarketInfoGrpc.MarketInfoClient(target, credentials);
   }
 
   getHeaders(): Record<string, string> {
@@ -125,308 +148,143 @@ export class MT4Client {
     return meta;
   }
 
-  async getId(user?: number | string, password?: string): Promise<string> {
-    if (this.id) return this.id;
-    const u = user || this.lastUser;
-    const p = password || this.lastPassword;
-    if (!u || !p) return this.id || '';
-
-    try {
-      const req = new ConnectionPb.GetIdRequest();
-      req.setUser(Number(u));
-      req.setPassword(String(p));
-      const meta = this.getGrpcMetadata();
-      const res: any = await new Promise((resolve, reject) => {
-        const deadline = new Date(Date.now() + 2000);
-        this.connectionClient.getId(req, meta, { deadline }, (err: any, reply: any) => {
-          if (err) return reject(err);
-          resolve(reply);
-        });
+  /** A unary call: resolves with the reply's data, rejects with the reply's error or the call's failure. */
+  private call(client: any, method: string, request: any, timeoutMs: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const deadline = new Date(Date.now() + timeoutMs);
+      client[method](request, this.getGrpcMetadata(), { deadline }, (err: any, reply: any) => {
+        if (err) return reject(err);
+        const error = reply?.getError?.();
+        if (error) return reject(new MrpcError(error.getErrorMessage() || 'request failed', error.getErrorCode() || ''));
+        resolve(reply?.getData?.());
       });
-      if (res && res.getData() && res.getData().getId()) {
-        this.id = res.getData().getId();
-        return this.id!;
-      }
-    } catch {
-      // Fall back to REST / deterministic ID
-    }
-
-    try {
-      const url = `https://${this.host}:${this.port}/GetId?user=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`;
-      const options = {
-        headers: { 'apikey': this.apiKey || 'TRIAL' },
-        timeout: 1000
-      };
-      const token = await new Promise<string>((resolve, reject) => {
-        const req = https.get(url, options, res => {
-          let body = '';
-          res.on('data', chunk => body += chunk);
-          res.on('end', () => {
-            try {
-              const json = JSON.parse(body);
-              if (json && json.data && json.data.id) {
-                resolve(json.data.id);
-              } else {
-                reject(new Error('Invalid response'));
-              }
-            } catch (e) {
-              reject(e);
-            }
-          });
-        });
-        req.on('error', reject);
-        req.on('timeout', () => { req.destroy(); reject(new Error('Timeout')); });
-      });
-      this.id = token;
-      return this.id;
-    } catch {
-      this.id = MT4Client.computeDeterministicId(u, String(p));
-      return this.id;
-    }
+    });
   }
 
-  async connect(loginOrOptions: number | ConnectOptions, password?: string): Promise<boolean> {
-    let user: number;
-    let pass: string;
-    let server: string | undefined;
-    let host: string | undefined;
-    let port: number | undefined;
+  /** The terminal id the server assigns to these credentials (Connection.GetId). */
+  async getId(user: number | string, password: string): Promise<string> {
+    if (this.id) return this.id;
+    const req = new ConnectionPb.GetIdRequest();
+    req.setUser(String(user));
+    req.setPassword(String(password));
+    const data = await this.call(this.connectionClient, 'getId', req, 30000);
+    if (!data?.getId()) throw new MrpcError('GetId returned no id');
+    this.id = data.getId();
+    return this.id!;
+  }
 
-    if (typeof loginOrOptions === 'object') {
-      user = loginOrOptions.user;
-      pass = loginOrOptions.password;
-      server = loginOrOptions.server;
-      host = loginOrOptions.host;
-      port = loginOrOptions.port;
+  /** Connects by broker server name (ConnectEx: `server`, e.g. "TeleTrade-Demo") or by address (Connect: `host`/`port`). */
+  async connect(loginOrOptions: number | ConnectOptions, password?: string, server?: string): Promise<boolean> {
+    const options: ConnectOptions = typeof loginOrOptions === 'object'
+      ? loginOrOptions
+      : { user: loginOrOptions, password: password || '', server };
+    const timeoutSec = options.timeoutSeconds || 60;
+    const timeoutMs = (timeoutSec + 10) * 1000;
+
+    let data: any;
+    if (options.server) {
+      const req = new ConnectionPb.ConnectExRequest();
+      req.setUser(options.user);
+      req.setPassword(options.password);
+      req.setMtClusterName(options.server);
+      req.setTimeoutSeconds(timeoutSec);
+      data = await this.call(this.connectionClient, 'connectEx', req, timeoutMs);
+    } else if (options.host) {
+      const req = new ConnectionPb.ConnectRequest();
+      req.setUser(options.user);
+      req.setPassword(options.password);
+      req.setHost(options.host);
+      req.setPort(options.port || 443);
+      req.setTimeoutSeconds(timeoutSec);
+      data = await this.call(this.connectionClient, 'connect', req, timeoutMs);
     } else {
-      user = loginOrOptions;
-      pass = password || '';
-      server = 'MetaQuotes-Demo';
+      throw new MrpcError('connect needs a broker server name (server) or host');
     }
-
-    this.lastUser = user;
-    const timeoutSec = (typeof loginOrOptions === 'object' && loginOrOptions.timeoutSeconds) || 60;
-    try {
-      const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + (timeoutSec + 10) * 1000);
-
-      if (server) {
-        const req = new ConnectionPb.ConnectExRequest();
-        req.setUser(user);
-        req.setPassword(pass);
-        req.setMtClusterName(server);
-        req.setTimeoutSeconds(timeoutSec);
-
-        const reply: any = await new Promise((resolve, reject) => {
-          this.connectionClient.connectEx(req, meta, { deadline }, (err: any, res: any) => {
-            if (err) return reject(err);
-            resolve(res);
-          });
-        });
-        if (reply?.getError()) {
-          throw new Error(reply.getError().getErrorMessage() || 'ConnectEx failed');
-        }
-        if (reply?.getData()?.getTerminalInstanceGuid()) {
-          this.id = reply.getData().getTerminalInstanceGuid();
-        }
-      } else if (host) {
-        const req = new ConnectionPb.ConnectRequest();
-        req.setUser(user);
-        req.setPassword(pass);
-        req.setHost(host);
-        req.setPort(port || 443);
-        req.setTimeoutSeconds(timeoutSec);
-
-        const reply: any = await new Promise((resolve, reject) => {
-          this.connectionClient.connect(req, meta, { deadline }, (err: any, res: any) => {
-            if (err) return reject(err);
-            resolve(res);
-          });
-        });
-        if (reply?.getError()) {
-          throw new Error(reply.getError().getErrorMessage() || 'Connect failed');
-        }
-        if (reply?.getData()?.getTerminalInstanceGuid()) {
-          this.id = reply.getData().getTerminalInstanceGuid();
-        }
-      }
-      this.connected = true;
-      return true;
-    } catch (err: any) {
-      if (this.apiKey === 'mrpc_test_key' || user === 100234) {
-        if (!this.id) {
-          this.id = 'demo-terminal-guid-' + (user || 'test');
-        }
-        this.connected = true;
-        return true;
-      }
-      throw err;
-    }
+    if (!data?.getTerminalInstanceGuid()) throw new MrpcError('Connect returned no terminal id');
+    this.id = data.getTerminalInstanceGuid();
+    this.lastServer = options.server || options.host;
+    this.connected = true;
+    return true;
   }
 
   async getAccountInfo(): Promise<AccountInfo> {
-    try {
-      const req = new AccountHelperPb.AccountSummaryRequest();
-      const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + 15000);
-
-      const reply: any = await new Promise((resolve, reject) => {
-        this.accountClient.accountSummary(req, meta, { deadline }, (err: any, res: any) => {
-          if (err) return reject(err);
-          resolve(res);
-        });
-      });
-
-      if (reply && reply.getError()) {
-        if (this.apiKey === 'mrpc_test_key' || this.lastUser === 100234) {
-          return {
-            login: 100234,
-            currency: "USD",
-            balance: 5000.0,
-            equity: 5000.0,
-            margin: 0.0,
-            freeMargin: 5000.0,
-            leverage: 100,
-            name: "Demo MT4",
-            server: this.host
-          };
-        }
-        throw new Error(reply.getError().getErrorMessage() || reply.getError().getErrorCode());
-      }
-
-      const data = reply ? reply.getData() : null;
-      if (data) {
-        return {
-          login: data.getAccountLogin(),
-          currency: data.getAccountCurrency() || 'USD',
-          balance: data.getAccountBalance(),
-          equity: data.getAccountEquity(),
-          margin: 0,
-          freeMargin: data.getAccountBalance(),
-          leverage: data.getAccountLeverage(),
-          name: data.getAccountUserName() || '',
-          server: this.host
-        };
-      }
-    } catch (err: any) {
-      if (this.apiKey === 'mrpc_test_key' || this.lastUser === 100234) {
-        return {
-          login: 100234,
-          currency: "USD",
-          balance: 5000.0,
-          equity: 5000.0,
-          margin: 0.0,
-          freeMargin: 5000.0,
-          leverage: 100,
-          name: "Demo MT4",
-          server: this.host
-        };
-      }
-      throw err;
-    }
-
+    const summary = await this.call(this.accountClient, 'accountSummary', new AccountHelperPb.AccountSummaryRequest(), 15000);
     return {
-      login: this.lastUser || 0,
-      currency: "USD",
-      balance: 0,
-      equity: 0,
-      margin: 0,
-      freeMargin: 0,
-      leverage: 100,
-      name: "",
-      server: this.host
+      login: summary.getAccountLogin(),
+      currency: summary.getAccountCurrency(),
+      balance: summary.getAccountBalance(),
+      equity: summary.getAccountEquity(),
+      leverage: summary.getAccountLeverage(),
+      name: summary.getAccountUserName(),
+      server: this.lastServer || '',
     };
   }
 
   async orderSend(req: OrderRequest): Promise<OrderResult> {
-    try {
-      const grpcReq = new TradingHelperPb.OrderSendRequest();
-      grpcReq.setSymbol(req.symbol);
-      if (typeof req.cmd === 'number') {
-        grpcReq.setOperationType(req.cmd);
-      } else if (req.cmd === 'SELL') {
-        grpcReq.setOperationType(TradingHelperPb.OrderSendOperationType.OC_OP_SELL);
-      } else {
-        grpcReq.setOperationType(TradingHelperPb.OrderSendOperationType.OC_OP_BUY);
+    if (!(req.cmd in ORDER_TYPES)) throw new MrpcError(`Unknown order command ${req.cmd}`);
+    const grpcReq = new TradingHelperPb.OrderSendRequest();
+    grpcReq.setSymbol(req.symbol);
+    grpcReq.setOperationType(ORDER_TYPES[req.cmd]);
+    grpcReq.setVolume(req.lots);
+    if (req.price !== undefined) grpcReq.setPrice(req.price);
+    if (req.stopLoss !== undefined) grpcReq.setStoploss(req.stopLoss);
+    if (req.takeProfit !== undefined) grpcReq.setTakeprofit(req.takeProfit);
+    if (req.comment !== undefined) grpcReq.setComment(req.comment);
+    if (req.slippage !== undefined) grpcReq.setSlippage(req.slippage);
+    if (req.magicNumber !== undefined) grpcReq.setMagicNumber(req.magicNumber);
+
+    const data = await this.call(this.tradingClient, 'orderSend', grpcReq, 20000);
+    if (!data) throw new MrpcError('Order execution returned no data');
+    return {
+      ticket: data.getTicket(),
+      errorCode: 0,
+      lots: data.getVolume(),
+      price: data.getPrice(),
+      comment: req.comment || '',
+    };
+  }
+
+  /**
+   * Streams the ticks of the symbols. `onError` receives an error reply of the stream or the stream's failure
+   * (a cancelled stream - `unsubscribe()` - is not an error).
+   */
+  subscribeQuotes(symbols: string[], callback: (quote: Quote) => void, onError?: (error: Error) => void): { unsubscribe: () => void } {
+    const req = new SubscriptionsPb.OnSymbolTickRequest();
+    req.setSymbolNamesList(symbols || []);
+    const stream = this.subscriptionClient.onSymbolTick(req, this.getGrpcMetadata());
+    stream.on('data', (reply: any) => {
+      const error = reply.getError();
+      if (error) {
+        onError?.(new MrpcError(error.getErrorMessage() || 'stream error', error.getErrorCode() || ''));
+        return;
       }
-      grpcReq.setVolume(req.lots);
-      if (req.price) grpcReq.setPrice(req.price);
-      if (req.stopLoss) grpcReq.setStoploss(req.stopLoss);
-      if (req.takeProfit) grpcReq.setTakeprofit(req.takeProfit);
-      if (req.comment) grpcReq.setComment(req.comment);
-      if (req.slippage) grpcReq.setSlippage(req.slippage);
-
-      const meta = this.getGrpcMetadata();
-      const deadline = new Date(Date.now() + 20000);
-
-      const reply: any = await new Promise((resolve, reject) => {
-        this.tradingClient.orderSend(grpcReq, meta, { deadline }, (err: any, res: any) => {
-          if (err) return reject(err);
-          resolve(res);
-        });
+      const tick = reply.getData()?.getSymbolTick();
+      if (!tick) return; // a heartbeat
+      callback({
+        symbol: tick.getSymbol(),
+        bid: tick.getBid(),
+        ask: tick.getAsk(),
+        time: tick.getTimeUtc() ? tick.getTimeUtc().toDate().getTime() : Date.now(),
       });
-
-      if (reply && reply.getError()) {
-        if (this.apiKey === 'mrpc_test_key' || this.lastUser === 100234) {
-          return {
-            ticket: Math.floor(Math.random() * 1000000),
-            errorCode: 0,
-            price: req.price || 1.0850,
-            lots: req.lots,
-            comment: req.comment || "Test MT4 order"
-          };
-        }
-        throw new Error(reply.getError().getErrorMessage() || reply.getError().getErrorCode());
-      }
-
-      const data = reply ? reply.getData() : null;
-      if (data) {
-        return {
-          ticket: data.getTicket() || 0,
-          errorCode: 0,
-          lots: data.getVolume ? data.getVolume() : req.lots,
-          price: data.getPrice ? data.getPrice() : (req.price || 0),
-          comment: req.comment || ''
-        };
-      }
-    } catch (err: any) {
-      if (this.apiKey === 'mrpc_test_key' || this.lastUser === 100234) {
-        return {
-          ticket: Math.floor(Math.random() * 1000000),
-          errorCode: 0,
-          price: req.price || 1.0850,
-          lots: req.lots,
-          comment: req.comment || "Test MT4 order"
-        };
-      }
-      throw err;
-    }
-
-    throw new Error('Order execution returned no data');
+    });
+    stream.on('error', (err: any) => {
+      if (err?.code !== grpc.status.CANCELLED) onError?.(err);
+    });
+    return {
+      unsubscribe: () => stream.cancel()
+    };
   }
 
   async disconnect(deleteOnDisconnect: boolean = false): Promise<void> {
     this.connected = false;
     try {
-      if (this.connectionClient) {
-        const meta = this.getGrpcMetadata();
-        if (deleteOnDisconnect) {
-          meta.set('delete', 'true');
-        }
-        const deadline = new Date(Date.now() + 5000);
+      if (this.id) {
         const req = new ConnectionPb.DisconnectRequest();
-        if (typeof req.setDelete === 'function') {
-          req.setDelete(deleteOnDisconnect);
-        }
-        await new Promise((resolve) => {
-          this.connectionClient.disconnect(req, meta, { deadline }, () => {
-            resolve(true);
-          });
-        });
+        req.setDelete(deleteOnDisconnect);
+        await this.call(this.connectionClient, 'disconnect', req, 10000);
       }
-    } catch {}
-    try {
+    } finally {
       this.channel.close();
-    } catch {}
+    }
   }
 }
