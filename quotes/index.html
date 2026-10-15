@@ -23,7 +23,7 @@
     
     
       
-        <title>Quotes & Market Data - NodeMT4 SDK Documentation</title>
+        <title>Quotes - NodeMT4 SDK Documentation</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quotes-market-data" class="md-skip">
+        <a href="#quotes" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quotes &amp; Market Data
+              Quotes
             
           </span>
         </div>
@@ -932,13 +932,17 @@
   
 
 
-<h1 id="quotes-market-data">Quotes &amp; Market Data<a class="headerlink" href="#quotes-market-data" title="Permanent link">¶</a></h1>
-<p>Stream live quotes and fetch candlestick charts.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Real-time tick subscription</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">subscribeQuotes</span><span class="p">([</span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="s1">'GBPUSD'</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">symbol</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">bid</span><span class="si">}</span><span class="sb"> / </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">ask</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">});</span>
+<h1 id="quotes">Quotes<a class="headerlink" href="#quotes" title="Permanent link">¶</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">subscribeQuotes</span><span class="p">([</span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="s1">'GBPUSD'</span><span class="p">],</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">symbol</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">bid</span><span class="si">}</span><span class="sb"> / </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">ask</span><span class="si">}</span><span class="sb"> at </span><span class="si">${</span><span class="ow">new</span><span class="w"> </span><span class="nb">Date</span><span class="p">(</span><span class="nx">quote</span><span class="p">.</span><span class="nx">time</span><span class="p">).</span><span class="nx">toISOString</span><span class="p">()</span><span class="si">}</span><span class="sb">`</span><span class="p">),</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">'stream error:'</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">));</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// later</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nx">sub</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
 </code></pre></div>
+<p><code>quote.time</code> is the tick time in milliseconds since the epoch (UTC). <code>onError</code> receives an error the stream answers with
+(for example <code>NO_CHARTS_OPENED_FOR_SYMBOLS</code> for a symbol the terminal doesn't have) or the stream's failure; an
+<code>unsubscribe()</code> is not an error. Bars and other market data are in the generated <code>MarketInfoGrpc</code> client.</p>
 
 
 

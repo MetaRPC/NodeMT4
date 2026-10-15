@@ -23,7 +23,7 @@
     
     
       
-        <title>Account Information - NodeMT4 SDK Documentation</title>
+        <title>Account - NodeMT4 SDK Documentation</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#account-information" class="md-skip">
+        <a href="#account" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Account Information
+              Account
             
           </span>
         </div>
@@ -932,13 +932,35 @@
   
 
 
-<h1 id="account-information">Account Information<a class="headerlink" href="#account-information" title="Permanent link">¶</a></h1>
-<p>Querying account balance, equity, and order history.</p>
+<h1 id="account">Account<a class="headerlink" href="#account" title="Permanent link">¶</a></h1>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">account</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getAccountInfo</span><span class="p">();</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Balance:'</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">balance</span><span class="p">);</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Equity:'</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">equity</span><span class="p">);</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Free Margin:'</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">freeMargin</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">account</span><span class="p">.</span><span class="nx">login</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">server</span><span class="p">);</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Balance </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">balance</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">currency</span><span class="si">}</span><span class="sb">, equity </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">equity</span><span class="si">}</span><span class="sb">, leverage 1:</span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">leverage</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
 </code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>login</code>, <code>name</code></td>
+<td>account number and owner name (<code>AccountSummary</code>)</td>
+</tr>
+<tr>
+<td><code>balance</code>, <code>equity</code>, <code>currency</code>, <code>leverage</code></td>
+<td><code>AccountSummary</code></td>
+</tr>
+<tr>
+<td><code>server</code></td>
+<td>the broker server you connected with</td>
+</tr>
+</tbody>
+</table>
+<p>MT4's <code>AccountSummary</code> has no margin values. They come with the trade streams instead: <code>OnOpenedOrdersProfit</code>
+(<code>SubscriptionsGrpc</code>) sends <code>account_info</code> with <code>margin</code>, <code>free_margin</code> and <code>margin_level</code> every <code>timer_period_milliseconds</code>.</p>
 
 
 

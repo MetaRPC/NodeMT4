@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#automatic-account-id-authentication" class="md-skip">
+        <a href="#connection" class="md-skip">
           Skip to content
         </a>
       
@@ -911,6 +911,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -919,21 +921,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#automatic-account-id-authentication" class="md-nav__link">
+  <a href="#api-key-and-terminal-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🆔 Automatic Account ID &amp; Authentication
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connection-authentication" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connection &amp; Authentication
+        API key and terminal id
       
     </span>
   </a>
@@ -960,22 +951,29 @@
   
 
 
-<h2 id="automatic-account-id-authentication">🆔 Automatic Account ID &amp; Authentication<a class="headerlink" href="#automatic-account-id-authentication" title="Permanent link">¶</a></h2>
-<p>MetaRPC endpoints route calls using a terminal session GUID (<code>id</code>).
-When connecting via <code>Connect</code> / <code>ConnectEx</code>, the server automatically generates and returns your session GUID (<code>terminalInstanceGuid</code>). The SDK captures this ID and attaches both your <code>id</code> and <code>APIKey</code> headers to all subsequent terminal calls — no manual <code>GetId</code> or curl steps required.</p>
-<h1 id="connection-authentication">Connection &amp; Authentication<a class="headerlink" href="#connection-authentication" title="Permanent link">¶</a></h1>
-<p>Managing connection sessions with MetaTrader 4 servers.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MT4Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@metarpc/nodemt4'</span><span class="p">;</span>
+<h1 id="connection">Connection<a class="headerlink" href="#connection" title="Permanent link">¶</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MT4Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'@metarpc/nodemt4'</span><span class="p">);</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.mrpc.pro'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">);</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="mf">100234</span><span class="p">,</span><span class="w"> </span><span class="s1">'password'</span><span class="p">);</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1">// Disconnect gracefully</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nx">client</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.mrpc.pro'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">,</span><span class="w"> </span><span class="s1">'your-api-key'</span><span class="p">);</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="mf">7689280</span><span class="p">,</span><span class="w"> </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'your-password'</span><span class="p">,</span><span class="w"> </span><span class="nx">server</span><span class="o">:</span><span class="w"> </span><span class="s1">'TeleTrade-Demo'</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'terminal'</span><span class="p">,</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">// ... calls ...</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span><span class="w">        </span><span class="c1">// or disconnect(true): stop the terminal and delete it</span>
 </code></pre></div>
-<blockquote>
-<p><strong>Authentication Note</strong>: Connecting to <code>mt4.mrpc.pro:443</code> requires a valid MetaRPC API key. Register for free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a> and generate your token in <a href="https://mrpc.pro/my">https://mrpc.pro/my</a>.</p>
-</blockquote>
+<p><code>connect()</code> resolves once the terminal is connected and rejects with an <code>MrpcError</code> when the server refuses (wrong
+password, unknown server, ...). To connect by address instead of broker server name, pass <code>host</code> and <code>port</code> instead of
+<code>server</code>.</p>
+<p>There is no automatic reconnect in the client: if a call rejects with <code>TERMINAL_INSTANCE_NOT_FOUND</code> or the channel fails,
+call <code>connect()</code> again.</p>
+<h2 id="api-key-and-terminal-id">API key and terminal id<a class="headerlink" href="#api-key-and-terminal-id" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><code>APIKey</code></strong>: your key from <a href="https://mrpc.pro/my">https://mrpc.pro/my</a> (sign up free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a>).
+  Pass it to the constructor or set <code>MRPC_API_KEY</code>; without one the client sends <code>TRIAL</code>.</li>
+<li><strong><code>id</code></strong>: the terminal id. <code>connect()</code> receives it from the server (<code>terminalInstanceGuid</code>), keeps it in <code>client.id</code> and
+  sends it with every later call and stream. You don't need to call <code>getId()</code> first.</li>
+</ul>
 
 
 

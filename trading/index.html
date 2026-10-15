@@ -23,7 +23,7 @@
     
     
       
-        <title>Trading & Orders - NodeMT4 SDK Documentation</title>
+        <title>Trading - NodeMT4 SDK Documentation</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#trading-orders" class="md-skip">
+        <a href="#trading" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Trading &amp; Orders
+              Trading
             
           </span>
         </div>
@@ -932,23 +932,36 @@
   
 
 
-<h1 id="trading-orders">Trading &amp; Orders<a class="headerlink" href="#trading-orders" title="Permanent link">¶</a></h1>
-<p>Opening, modifying, and closing orders.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Open Buy</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderSend</span><span class="p">({</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">symbol</span><span class="o">:</span><span class="w"> </span><span class="s1">'EURUSD'</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nx">cmd</span><span class="o">:</span><span class="w"> </span><span class="s1">'BUY'</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nx">lots</span><span class="o">:</span><span class="w"> </span><span class="kt">0.05</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nx">stopLoss</span><span class="o">:</span><span class="w"> </span><span class="kt">1.0800</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nx">takeProfit</span><span class="o">:</span><span class="w"> </span><span class="kt">1.0950</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">});</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">// Close order</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderClose</span><span class="p">({</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nx">ticket</span><span class="o">:</span><span class="w"> </span><span class="kt">order.ticket</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nx">lots</span><span class="o">:</span><span class="w"> </span><span class="kt">0.05</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">});</span>
+<h1 id="trading">Trading<a class="headerlink" href="#trading" title="Permanent link">¶</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderSend</span><span class="p">({</span><span class="w"> </span><span class="nx">symbol</span><span class="o">:</span><span class="w"> </span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="nx">cmd</span><span class="o">:</span><span class="w"> </span><span class="s1">'BUY'</span><span class="p">,</span><span class="w"> </span><span class="nx">lots</span><span class="o">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="nx">slippage</span><span class="o">:</span><span class="w"> </span><span class="mf">30</span><span class="p">,</span><span class="w"> </span><span class="nx">comment</span><span class="o">:</span><span class="w"> </span><span class="s1">'first order'</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Ticket #</span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">lots</span><span class="si">}</span><span class="sb"> lots at </span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">price</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
 </code></pre></div>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Request</td>
+<td><code>symbol</code>, <code>cmd</code> (<code>BUY</code>, <code>SELL</code>, <code>BUY_LIMIT</code>, <code>SELL_LIMIT</code>, <code>BUY_STOP</code>, <code>SELL_STOP</code>), <code>lots</code>, optional <code>price</code>, <code>slippage</code>, <code>stopLoss</code>, <code>takeProfit</code>, <code>comment</code>, <code>magicNumber</code></td>
+</tr>
+<tr>
+<td>Result</td>
+<td><code>ticket</code>, <code>lots</code>, <code>price</code>, <code>comment</code> (the one you sent); <code>errorCode</code> is always 0</td>
+</tr>
+<tr>
+<td>An order the server refuses rejects with an <code>MrpcError</code> carrying the server's error code. Modifying and closing orders is</td>
+<td></td>
+</tr>
+<tr>
+<td>done with the generated <code>TradingHelperGrpc</code> client (see <a href="../api/#everything-else">API Reference</a>).</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 
 

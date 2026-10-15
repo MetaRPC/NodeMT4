@@ -921,10 +921,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mt4client-class" class="md-nav__link">
+  <a href="#mt4client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MT4Client Class
+        MT4Client
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#everything-else" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Everything else
       
     </span>
   </a>
@@ -952,17 +963,70 @@
 
 
 <h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">¶</a></h1>
-<p>Complete API specifications for <code>@metarpc/nodemt4</code>.</p>
-<h3 id="mt4client-class"><code>MT4Client</code> Class<a class="headerlink" href="#mt4client-class" title="Permanent link">¶</a></h3>
-<ul>
-<li><code>connect(login: number, password: string): Promise&lt;boolean&gt;</code></li>
-<li><code>disconnect(): void</code></li>
-<li><code>getAccountInfo(): Promise&lt;AccountInfo&gt;</code></li>
-<li><code>subscribeQuotes(symbols: string[], callback: (quote: Quote) =&gt; void): Promise&lt;void&gt;</code></li>
-<li><code>orderSend(req: OrderRequest): Promise&lt;OrderResult&gt;</code></li>
-<li><code>orderModify(ticket: number, sl: number, tp: number): Promise&lt;boolean&gt;</code></li>
-<li><code>orderClose(ticket: number, lots: number): Promise&lt;boolean&gt;</code></li>
-</ul>
+<p>Everything <code>MT4Client</code> from <code>@metarpc/nodemt4</code> offers. Every call that the server answers with an error rejects with an <code>MrpcError</code>
+(<code>err.code</code> is the API's error code, e.g. <code>TERMINAL_INSTANCE_NOT_FOUND</code>); a failed call (network, deadline) rejects with
+the gRPC error. Nothing is invented on failure.</p>
+<h3 id="mt4client"><code>MT4Client</code><a class="headerlink" href="#mt4client" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new MT4Client(host = 'mt4.mrpc.pro', port = 443, apiKey?, id?)</code></td>
+<td>TLS on port 443, plaintext otherwise. <code>apiKey</code> defaults to <code>MRPC_API_KEY</code>, then <code>TRIAL</code></td>
+</tr>
+<tr>
+<td><code>connect({ user, password, server })</code></td>
+<td><code>ConnectEx</code> by broker server name; <code>connect({ user, password, host, port })</code> uses <code>Connect</code> by address; <code>timeoutSeconds</code> (default 60)</td>
+</tr>
+<tr>
+<td><code>connect(login, password, server)</code></td>
+<td>the same, short form</td>
+</tr>
+<tr>
+<td><code>getAccountInfo(): Promise&lt;AccountInfo&gt;</code></td>
+<td>see <a href="../account/">Account</a></td>
+</tr>
+<tr>
+<td><code>orderSend(request): Promise&lt;OrderResult&gt;</code></td>
+<td>see <a href="../trading/">Trading</a></td>
+</tr>
+<tr>
+<td><code>subscribeQuotes(symbols, onQuote, onError?)</code></td>
+<td><code>OnSymbolTick</code> stream; returns <code>{ unsubscribe() }</code>, see <a href="../quotes/">Quotes</a></td>
+</tr>
+<tr>
+<td><code>disconnect(deleteTerminal = false)</code></td>
+<td><code>Disconnect</code>; <code>true</code> also deletes the terminal. Closes the channel</td>
+</tr>
+<tr>
+<td><code>getId(login, password): Promise&lt;string&gt;</code></td>
+<td><code>GetId</code>: the terminal id for these credentials</td>
+</tr>
+<tr>
+<td><code>MT4Client.openDemoAccount(server, apiKey, host = 'mt4.mrpc.pro')</code></td>
+<td><code>GET /DemoAccount/Open</code>: a new demo account <code>{ login, password, server }</code></td>
+</tr>
+<tr>
+<td><code>client.id</code>, <code>client.connected</code></td>
+<td>the terminal id after <code>connect()</code>; whether <code>connect()</code> succeeded</td>
+</tr>
+<tr>
+<td><code>getGrpcMetadata()</code></td>
+<td>the <code>apikey</code> / <code>id</code> metadata, for your own calls through the generated clients</td>
+</tr>
+</tbody>
+</table>
+<h3 id="everything-else">Everything else<a class="headerlink" href="#everything-else" title="Permanent link">¶</a></h3>
+<p>The client covers connecting, the account, market orders and ticks. Every other method of the API (positions, history,
+symbol information, order modify/close, other streams) is in the generated gRPC clients the package exports
+(<code>ConnectionGrpc</code>, <code>AccountHelperGrpc</code>, <code>TradingHelperGrpc</code>, <code>SubscriptionsGrpc</code>, <code>MarketInfoGrpc</code>, ... with their <code>*Pb</code>
+messages) and under <code>@metarpc/nodemt4/package/</code>. Call them on the same host with <code>client.getGrpcMetadata()</code>; every reply has
+<code>data</code> or <code>error</code>. The full API: <a href="https://mt4.mrpc.pro/apiui">https://mt4.mrpc.pro/apiui</a>.</p>
 
 
 

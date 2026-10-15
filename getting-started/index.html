@@ -921,32 +921,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#api-key-and-terminal-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prerequisites
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quickstart-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quickstart Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#automatic-account-id-authentication" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🆔 Automatic Account ID &amp; Authentication
+        API key and terminal id
       
     </span>
   </a>
@@ -974,53 +952,38 @@
 
 
 <h1 id="getting-started-with-nodemt4">Getting Started with NodeMT4<a class="headerlink" href="#getting-started-with-nodemt4" title="Permanent link">¶</a></h1>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
-<ul>
-<li><strong>Node.js 18.0+</strong></li>
-<li>MT4 account credentials (Host, Port, Login, Password)</li>
-</ul>
-<h2 id="quickstart-example">Quickstart Example<a class="headerlink" href="#quickstart-example" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MT4Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@metarpc/nodemt4'</span><span class="p">;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.mrpc.pro'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">);</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Connecting to MT4...'</span><span class="p">);</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="mf">100234</span><span class="p">,</span><span class="w"> </span><span class="s1">'my_password'</span><span class="p">);</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Connected!'</span><span class="p">);</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getAccountInfo</span><span class="p">();</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Balance: </span><span class="si">${</span><span class="nx">acc</span><span class="p">.</span><span class="nx">balance</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">acc</span><span class="p">.</span><span class="nx">currency</span><span class="si">}</span><span class="sb">, Leverage: 1:</span><span class="si">${</span><span class="nx">acc</span><span class="p">.</span><span class="nx">leverage</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="c1">// Subscribe quotes</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">subscribeQuotes</span><span class="p">([</span><span class="s1">'EURUSD'</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`[EURUSD] Bid: </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">bid</span><span class="si">}</span><span class="sb"> Ask: </span><span class="si">${</span><span class="nx">quote</span><span class="p">.</span><span class="nx">ask</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="p">});</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="c1">// Open market order</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderSend</span><span class="p">({</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nx">symbol</span><span class="o">:</span><span class="w"> </span><span class="s1">'EURUSD'</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nx">cmd</span><span class="o">:</span><span class="w"> </span><span class="s1">'BUY'</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="nx">lots</span><span class="o">:</span><span class="w"> </span><span class="kt">0.1</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="nx">comment</span><span class="o">:</span><span class="w"> </span><span class="s1">'NodeMT4 Trade'</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">  </span><span class="p">});</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Order executed! Ticket #</span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="p">}</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="nx">main</span><span class="p">().</span><span class="k">catch</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
+<p>Requires Node.js 18 or newer, an MRPC API key and an MT4 account (any broker; or open a demo account with
+<code>MT4Client.openDemoAccount('TeleTrade-Demo', apiKey)</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>install<span class="w"> </span>github:MetaRPC/NodeMT4<span class="w"> </span>@grpc/grpc-js
 </code></pre></div>
-<blockquote>
-<p><strong>Authentication Note</strong>: Connecting to <code>mt4.mrpc.pro:443</code> requires a valid MetaRPC API key. Register for free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a> and generate your token in <a href="https://mrpc.pro/my">https://mrpc.pro/my</a>.</p>
-</blockquote>
-<hr />
-<h2 id="automatic-account-id-authentication">🆔 Automatic Account ID &amp; Authentication<a class="headerlink" href="#automatic-account-id-authentication" title="Permanent link">¶</a></h2>
-<p>MetaRPC endpoints require authentication and session management:
-1. <strong><code>APIKey</code></strong>: Your personal authentication token from <a href="https://mrpc.pro/my">https://mrpc.pro/my</a> (obtained by registering at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a>). Sent in the <code>APIKey</code> header.
-2. <strong><code>id</code></strong>: A terminal session GUID returned by <code>Connect</code> / <code>ConnectEx</code> (<code>terminalInstanceGuid</code>).</p>
-<blockquote>
-<p>💡 <strong>Seamless Automation</strong>: You do not need to call <code>GetId</code> or provide an <code>id</code> header when connecting. The server automatically generates a session GUID upon connection and returns it to the caller. The SDK automatically captures this session ID and attaches it alongside your <code>APIKey</code> to all subsequent requests and streaming subscriptions.</p>
-</blockquote>
+<p>The package is installed from GitHub; it is not on the npm registry. It is named <code>@metarpc/nodemt4</code>, so <code>require('@metarpc/nodemt4')</code> works as usual.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">MT4Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'@metarpc/nodemt4'</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">MT4Client</span><span class="p">(</span><span class="s1">'mt4.mrpc.pro'</span><span class="p">,</span><span class="w"> </span><span class="mf">443</span><span class="p">,</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">MRPC_API_KEY</span><span class="p">);</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="nb">Number</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">MT4_LOGIN</span><span class="p">),</span><span class="w"> </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">MT4_PASSWORD</span><span class="p">,</span><span class="w"> </span><span class="nx">server</span><span class="o">:</span><span class="w"> </span><span class="s1">'TeleTrade-Demo'</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">account</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getAccountInfo</span><span class="p">();</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Balance: </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">balance</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">currency</span><span class="si">}</span><span class="sb">, equity </span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">equity</span><span class="si">}</span><span class="sb">, leverage 1:</span><span class="si">${</span><span class="nx">account</span><span class="p">.</span><span class="nx">leverage</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderSend</span><span class="p">({</span><span class="w"> </span><span class="nx">symbol</span><span class="o">:</span><span class="w"> </span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="nx">cmd</span><span class="o">:</span><span class="w"> </span><span class="s1">'BUY'</span><span class="p">,</span><span class="w"> </span><span class="nx">lots</span><span class="o">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="nx">slippage</span><span class="o">:</span><span class="w"> </span><span class="mf">30</span><span class="p">,</span><span class="w"> </span><span class="nx">comment</span><span class="o">:</span><span class="w"> </span><span class="s1">'first order'</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Ticket #</span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">lots</span><span class="si">}</span><span class="sb"> lots at </span><span class="si">${</span><span class="nx">order</span><span class="p">.</span><span class="nx">price</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="nx">main</span><span class="p">().</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mf">1</span><span class="p">);</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+The same program with a demo account and error handling is
+<a href="https://github.com/MetaRPC/NodeMT4/blob/main/examples/quickstart.js"><code>examples/quickstart.js</code></a>.</p>
+<h2 id="api-key-and-terminal-id">API key and terminal id<a class="headerlink" href="#api-key-and-terminal-id" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><code>APIKey</code></strong>: your key from <a href="https://mrpc.pro/my">https://mrpc.pro/my</a> (sign up free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a>).
+  Pass it to the constructor or set <code>MRPC_API_KEY</code>; without one the client sends <code>TRIAL</code>.</li>
+<li><strong><code>id</code></strong>: the terminal id. <code>connect()</code> receives it from the server (<code>terminalInstanceGuid</code>), keeps it in <code>client.id</code> and
+  sends it with every later call and stream. You don't need to call <code>getId()</code> first.</li>
+</ul>
 
 
 
