@@ -55,10 +55,14 @@ export interface ConnectOptions {
     port?: number;
     timeoutSeconds?: number;
 }
-/** An error the MRPC API answered with (the reply's `error`), or a failed call. */
+/**
+ * An error the MRPC API answered with (the reply's `error`), or a failed call. `error` is the reply's error message
+ * itself (absent for a failed call): `getMqlErrorCode()`, `getMqlErrorTradeIntCode()` and the rest of its fields.
+ */
 export declare class MrpcError extends Error {
     readonly code: string;
-    constructor(message: string, code?: string);
+    readonly error?: any;
+    constructor(message: string, code?: string, error?: any);
 }
 export declare class MT4Client {
     host: string;

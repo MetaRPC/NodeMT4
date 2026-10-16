@@ -26,4 +26,5 @@ The client covers connecting, the account, market orders and ticks. Every other 
 symbol information, order modify/close, other streams) is in the generated gRPC clients the package exports
 (`ConnectionGrpc`, `AccountHelperGrpc`, `TradingHelperGrpc`, `SubscriptionsGrpc`, `MarketInfoGrpc`, ... with their `*Pb`
 messages) and under `@metarpc/nodemt4/package/`. Call them on the same host with `client.getGrpcMetadata()`; every reply has
-`data` or `error`. The full API: [https://mt4.mrpc.pro/apiui](https://mt4.mrpc.pro/apiui).
+`data` or `error`. Every method, its request and reply: [API methods](API_Reference/methods.md); try them at
+[https://mt4.mrpc.pro/apiui](https://mt4.mrpc.pro/apiui).

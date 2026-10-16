@@ -174,7 +174,7 @@ test('an error reply is an error - also for the key and login that used to get i
   failNext = { code: 'TERMINAL_INSTANCE_NOT_FOUND', message: 'no terminal' };
   await assert.rejects(c.getAccountInfo(), (e) => e.code === 'TERMINAL_INSTANCE_NOT_FOUND');
   failNext = { code: 'ERR_NOT_ENOUGH_MONEY', message: 'Not enough money' };
-  await assert.rejects(c.orderSend({ symbol: 'EURUSD', cmd: 'BUY', lots: 0.1 }), (e) => e.code === 'ERR_NOT_ENOUGH_MONEY');
+  await assert.rejects(c.orderSend({ symbol: 'EURUSD', cmd: 'BUY', lots: 0.1 }), (e) => e.code === 'ERR_NOT_ENOUGH_MONEY' && e.error.getErrorMessage() === 'Not enough money');
 });
 
 test('getId asks the server and fails when the server refuses', async () => {

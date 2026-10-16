@@ -64,4 +64,4 @@ No account yet? `MT4Client.openDemoAccount('TeleTrade-Demo', apiKey)` opens a de
 
 - **[Quotes](../quotes.md)** - stream ticks with `subscribeQuotes`.
 - **[API Reference](../api.md)** - everything `MT4Client` does, and the generated clients for the rest of the API.
-- **[gRPC Streaming](GRPC_STREAM_MANAGEMENT.md)** - the other streams.
+- **[Streams](STREAMS.md)** - the other streams.
