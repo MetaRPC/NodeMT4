@@ -7,25 +7,29 @@ path, `wss://mt4.mrpc.pro/...?id=...&apikey=...`). Every reply carries either `d
 
 ## Calling a method
 
-Every method below is a method of the generated client of its service (`{Service}Grpc` / `{Service}Pb` from
-`@metarpc/nodemt4`). Call it on the client's host with `client.getGrpcMetadata()` (the API key and the terminal id):
+Every method below is a method of the generated client of its service (`{Service}Grpc`, its messages in
+`{Service}Pb`, exported by `@metarpc/nodemt4`). Send `client.getGrpcMetadata()` (the API key and the terminal id) with it:
 
 ```javascript
-const { MT4Client, MarketInfoGrpc, MarketInfoPb } = require('@metarpc/nodemt4');
-const grpc = require('@grpc/grpc-js');
+const { MarketInfoPb } = require('@metarpc/nodemt4');
 
-const marketInfo = new MarketInfoGrpc.MarketInfoClient('mt4.mrpc.pro:443', grpc.credentials.createSsl());
+// client: a connected MT4Client; client.marketInfoClient is the generated MarketInfo client on its host
 const request = new MarketInfoPb.QuoteRequest();
 request.setSymbol('EURUSD');
-marketInfo.quote(request, client.getGrpcMetadata(), (err, reply) => {
-  if (err) throw err;                                   // the call failed
-  if (reply.getError()) throw new Error(reply.getError().getErrorMessage());   // the API answered with an error
-  console.log(reply.getData().getBid(), reply.getData().getAsk());
+client.marketInfoClient.quote(request, client.getGrpcMetadata(), (err, reply) => {
+  if (err) return console.error('call failed:', err.message);                  // network, deadline, ...
+  if (reply.getError()) return console.error('error:', reply.getError().getErrorCode());   // the API answered with an error
+  console.log(`EURUSD ${reply.getData().getBid()} / ${reply.getData().getAsk()}`);
 });
 ```
 
-Field `foo_bar` is `getFooBar()` / `setFooBar(value)`; a repeated field is `getFooBarList()` / `setFooBarList([...])`; an enum
-value is `XxxPb.EnumName.VALUE`. A server stream is `client.method(request, metadata)` with `on('data' | 'error' | 'end')`.
+The client holds the generated clients `connectionClient`, `accountClient`, `tradingClient`, `subscriptionClient`, `marketInfoClient`. For another service, create its client on the
+same host: `new TradeStatsGrpc.TradeStatsClient(`${client.host}:${client.port}`, grpc.credentials.createSsl())` (the
+service modules are under `@metarpc/nodemt4/package/`).
+
+Field `foo_bar` is `getFooBar()` / `setFooBar(value)` (the exact name of every field is in the tables below); a repeated
+field is `get...List()` / `set...List([...])`; an enum value is `XxxPb.ENUM_NAME.VALUE`. A server stream is
+`client.method(request, metadata)` with `on('data' | 'error' | 'end')`: see [Streams](../All_Guides/STREAMS.md).
 
 ## AccountHelper
 
@@ -129,7 +133,7 @@ Tick value as array. Name the symbols (symbolNames); with no names the reply cov
 
 ### Accounts.List
 
-Lists the accounts of the API key sent in the APIKey header, one page per call. Pass the next_page_token of a page back as page_token to continue; an empty next_page_token means that was the last page. [DefaultValues] { "includeStopped": "false", "pageSize": "200" }
+Lists the accounts of the API key sent in the APIKey header, one page per call. Pass the next_page_token of a page back as page_token to continue; an empty next_page_token means that was the last page.
 
 - gRPC: `mt4_term_api.Accounts/List` (unary)
 - REST: `GET /Accounts`
@@ -150,7 +154,7 @@ Lists the accounts of the API key sent in the APIKey header, one page per call. 
 
 ### Connection.ConnectEx
 
-Creates terminal connection to the MT5 server by MT cluster name, waits for connection and returns Guid of it [DefaultValues] { "user": "1124213727", "password": "1tjvjck", "mtClusterName": "FreshForex-Demo" }
+Creates terminal connection to the MT5 server by MT cluster name, waits for connection and returns Guid of it
 
 - gRPC: `mt4_term_api.Connection/ConnectEx` (unary)
 - REST: `GET /ConnectEx`
@@ -171,7 +175,7 @@ Creates terminal connection to the MT5 server by MT cluster name, waits for conn
 
 ### Connection.Connect
 
-Creates terminal connection to the MT4 server and returns Guid of it [DefaultValues] { "user": "501401178", "password": "v8gctta", "host": "mt4-demo.roboforex.com", "port": "443", "baseChartSymbol": "EURUSD", "waitForTerminalIsAlive": "true" }
+Creates terminal connection to the MT4 server and returns Guid of it
 
 - gRPC: `mt4_term_api.Connection/Connect` (unary)
 - REST: `GET /Connect`
@@ -193,7 +197,7 @@ Creates terminal connection to the MT4 server and returns Guid of it [DefaultVal
 
 ### Connection.ConnectProxy
 
-Connect to account with user, password, host, port. [DefaultValues] { "user": "500476959", "password": "ehj4bod", "host": "mt4-demo.roboforex.com", "port": "443", "proxyUser": "ProxyUser123", "proxyPassword": "qwerty123", "proxyHost": "65.108.126.217", "proxyPort": "1080", "proxyType": "Socks5" }
+Connect to account with user, password, host, port.
 
 - gRPC: `mt4_term_api.Connection/ConnectProxy` (unary)
 - REST: `GET /ConnectProxy`
@@ -334,7 +338,7 @@ Rebuild a terminal instance from a previously-saved token_details_mt4 row. The i
 
 ### Connection.GetId
 
-Generates a deterministic GUID from user and password. The same user/password combination always produces the same GUID. Use this GUID as the 'id' header for Connect and other endpoints. [DefaultValues] { "user": "1124213727", "password": "1tjvjck" }
+Generates a deterministic GUID from user and password. The same user/password combination always produces the same GUID. Use this GUID as the 'id' header for Connect and other endpoints.
 
 - gRPC: `mt4_term_api.Connection/GetId` (unary)
 - REST: `GET /GetId`
@@ -396,7 +400,7 @@ Same as Connect but streams real-time progress events (incl. live Journal/ Exper
 
 ### Connection.ConnectExStream
 
-Same as ConnectEx but streams real-time progress events (incl. live Journal/ Experts log lines) while the connection is established. Optional 'id' header — automatically generated by the server if omitted. Swagger does not support streaming — use /connect-stream interactive viewer. [DefaultValues] { "user": "1124213727", "password": "1tjvjck", "mtClusterName": "FreshForex-Demo" }
+Same as ConnectEx but streams real-time progress events (incl. live Journal/ Experts log lines) while the connection is established. Optional 'id' header — automatically generated by the server if omitted. Swagger does not support streaming — use /connect-stream interactive viewer.
 
 - gRPC: `mt4_term_api.Connection/ConnectExStream` (server stream)
 - REST: `GET /ConnectExStream` (also a WebSocket)
@@ -488,7 +492,7 @@ Demo account creation service. Automates the MT4 "Open an Account" wizard via Wi
 
 ### DemoAccount.OpenDemoAccount
 
-Open a demo account. Full wizard flow: search -> select -> fill form -> register. [DefaultValues] { "company": "MetaQuotes Ltd.", "firstName": "Test", "lastName": "User", "email": "test@test.com", "phone": "+1234567890", "timeoutSeconds": "60" }
+Open a demo account. Full wizard flow: search -> select -> fill form -> register.
 
 - gRPC: `mt4_term_api.DemoAccount/OpenDemoAccount` (unary)
 - REST: `GET /DemoAccount/Open`
@@ -686,7 +690,7 @@ Streams the live profit of currently opened orders. Requires 'id' header returne
 
 ### SubscriptionService.OnSymbolTick
 
-Streams real-time ticks for the given symbols. Requires 'id' header returned by Connect/ConnectEx. Swagger does not support streaming — use /subscription-stream interactive viewer. [DefaultValues] { "symbolNames": "EURUSD,BTCUSD" }
+Streams real-time ticks for the given symbols. Requires 'id' header returned by Connect/ConnectEx. Swagger does not support streaming — use /subscription-stream interactive viewer.
 
 - gRPC: `mt4_term_api.SubscriptionService/OnSymbolTick` (server stream)
 - REST: `GET /OnSymbolTick` (also a WebSocket)
@@ -703,7 +707,7 @@ Streams real-time ticks for the given symbols. Requires 'id' header returned by 
 
 ### TradeStats.TradeStats
 
-Trading statistics calculated from order history and open orders [DefaultValues] { "from": "2024-01-01T00:00:00" }
+Trading statistics calculated from order history and open orders
 
 - gRPC: `mt4_term_api.TradeStats/TradeStats` (unary)
 - REST: `GET /TradeStats`
@@ -719,7 +723,7 @@ Trading statistics calculated from order history and open orders [DefaultValues]
 
 ### TradeStats.TradeStatsEquityHistory
 
-Trading statistics with equity history chart points [DefaultValues] { "from": "2024-01-01T00:00:00", "excludeSameBars": true }
+Trading statistics with equity history chart points
 
 - gRPC: `mt4_term_api.TradeStats/TradeStatsEquityHistory` (unary)
 - REST: `GET /TradeStatsEquityHistory`
@@ -736,7 +740,7 @@ Trading statistics with equity history chart points [DefaultValues] { "from": "2
 
 ### TradeStats.EquityHistory
 
-Equity history curve points with drawdown calculation [DefaultValues] { "from": "2024-10-01T00:00:00", "excludeSameBars": true }
+Equity history curve points with drawdown calculation
 
 - gRPC: `mt4_term_api.TradeStats/EquityHistory` (unary)
 - REST: `GET /EquityHistory`
@@ -753,7 +757,7 @@ Equity history curve points with drawdown calculation [DefaultValues] { "from": 
 
 ### TradeStats.TradeUnrealizedPL
 
-Maximum and minimum unrealized profit/loss per trade [DefaultValues] { "from": "2024-01-01T00:00:00" }
+Maximum and minimum unrealized profit/loss per trade
 
 - gRPC: `mt4_term_api.TradeStats/TradeUnrealizedPL` (unary)
 - REST: `GET /TradeUnrealizedPL`
