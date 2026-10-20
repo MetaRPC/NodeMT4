@@ -13,18 +13,24 @@ export declare const ErrorPb: any;
 export declare const TimestampPb: any;
 /** QuoteHistory timeframes (ENUM_QUOTE_HISTORY_TIMEFRAME). NOTE: these are enum ordinals, not MT4 minute counts. */
 export declare const TIMEFRAMES: Record<string, number>;
-/** MT4 order operation types (OrderSendOperationType / OpenedOrderType share the same numbering). */
-export declare const ORDER_TYPES: Record<string, number>;
+export type OrderCommand = 'BUY' | 'SELL' | 'BUY_LIMIT' | 'SELL_LIMIT' | 'BUY_STOP' | 'SELL_STOP';
+/** Alias of OrderCommand. */
+export type OrderAction = OrderCommand;
+/** MT4 order operation types (OrderSendOperationType / OpenedOrderType share the same numbering: 0..5). */
+export declare const ORDER_TYPES: Record<OrderCommand, number>;
+/**
+ * What AccountSummary answers. MT4's AccountSummary carries no margin / free margin / margin level: take them from
+ * `subscribeOpenedOrdersProfit()` (its `account`) or from `subscribeTrades()`.
+ */
 export interface AccountInfo {
     login: number;
     currency: string;
     balance: number;
     equity: number;
     credit: number;
-    margin: number;
-    freeMargin: number;
     leverage: number;
     name: string;
+    /** The broker server name the account was connected with (e.g. "TeleTrade-Demo"), or the host for a Connect by address. */
     server: string;
     company: string;
     tradeMode: 'DEMO' | 'CONTEST' | 'REAL' | 'UNKNOWN';
@@ -50,8 +56,10 @@ export interface Tick {
     ask: number;
     last: number;
     volume: number;
-    /** Milliseconds since epoch, broker server time. */
+    /** Milliseconds since epoch, broker server time (encoded as if UTC). */
     time: number;
+    /** Milliseconds since epoch, real UTC (the server's time_utc), when the server reports it. */
+    timeUtc: number;
 }
 export interface SymbolParams {
     name: string;
@@ -97,17 +105,15 @@ export interface Bar {
     realVolume: number;
     spread: number;
 }
-export type OrderAction = 'BUY' | 'SELL' | 'BUY_LIMIT' | 'SELL_LIMIT' | 'BUY_STOP' | 'SELL_STOP';
 export interface OrderRequest {
     symbol: string;
-    /** Preferred name. */
-    action?: OrderAction | number;
-    /** Legacy alias of `action`. */
-    cmd?: OrderAction | number;
-    /** Preferred name. */
-    volume?: number;
-    /** Legacy alias of `volume`. */
+    /** Order command: 'BUY' | 'SELL' | 'BUY_LIMIT' | 'SELL_LIMIT' | 'BUY_STOP' | 'SELL_STOP' (or the ORDER_TYPES number). */
+    cmd?: OrderCommand | number;
+    /** Alias of `cmd`. */
+    action?: OrderCommand | number;
     lots?: number;
+    /** Alias of `lots`. */
+    volume?: number;
     /** MT4 request price. For market orders it is filled from quote() (ask for buys, bid for sells) when omitted. */
     price?: number;
     /** Points. */
@@ -115,17 +121,21 @@ export interface OrderRequest {
     stopLoss?: number;
     takeProfit?: number;
     comment?: string;
+    magicNumber?: number;
+    /** Alias of `magicNumber`. */
     magic?: number;
     /** Pending-order expiration (server time). */
     expiration?: Date | number;
 }
 export interface OrderResult {
     ticket: number;
-    /** 0 on success (an error throws MT4Error). Kept for backward compatibility. */
+    /** Always 0: an order the server refuses is an MrpcError. Kept for backward compatibility. */
     errorCode: number;
     price: number;
     lots: number;
+    /** Same as `lots`. */
     volume: number;
+    /** The comment the order was sent with. */
     comment: string;
     /** Seconds since epoch, server time. */
     openTime: number;
@@ -190,7 +200,7 @@ export interface ConnectOptions {
     /** Direct host/port connect (Connect) when no cluster name is known. */
     host?: string;
     port?: number;
-    /** How long the gateway waits for the terminal to start (cold start ~10-15 s). */
+    /** How long the gateway waits for the terminal to start (cold start ~10-15 s). Default 60. */
     timeoutSeconds?: number;
     /** Stable terminal id (uuid5 of the strategy id). Re-runs re-attach to the same terminal. */
     id?: string;
@@ -201,18 +211,28 @@ export interface ConnectOptions {
 export interface Subscription {
     unsubscribe(): void;
 }
-/** Error raised when the gateway answers with an Error payload instead of data. */
-export declare class MT4Error extends Error {
-    code: string;
-    mqlCode: number;
-    mqlIntCode: number;
-    mqlDescription: string;
-    constructor(err: any);
+/**
+ * An error the MRPC API answered with (the reply's `error`), or a failed call. `error` is the reply's error message
+ * itself (absent for a failed call): `getMqlErrorCode()`, `getMqlErrorTradeIntCode()` and the rest of its fields.
+ * The MQL fields are also unpacked: `mqlIntCode` is the MT4 error number (130 invalid stops, 131 invalid volume,
+ * 132 market closed, 133 trade disabled, 134 not enough money, 138 requote), `mqlDescription` its text.
+ */
+export declare class MrpcError extends Error {
+    readonly code: string;
+    readonly error?: any;
+    readonly mqlCode: number;
+    readonly mqlIntCode: number;
+    readonly mqlDescription: string;
+    constructor(message: string, code?: string, error?: any);
+    /** Builds the error for a reply's `error` message (mrpc.Error). */
+    static fromReply(error: any): MrpcError;
     /** INVALID_LOGIN / wrong password errors must never be retried (brokers lock accounts). */
     get isInvalidLogin(): boolean;
-    /** Errors after which the SDK's reconnect() is worth a try (terminal vanished on the gateway). */
+    /** Errors after which reconnect() is worth a try (the terminal vanished on the gateway). */
     get isTerminalLost(): boolean;
 }
+/** Alias of MrpcError. */
+export { MrpcError as MT4Error };
 export declare class MT4Client {
     host: string;
     port: number;
@@ -231,13 +251,17 @@ export declare class MT4Client {
     callTimeoutMs: number;
     private lastUser?;
     private lastPassword?;
+    private lastServer?;
     private lastConnect?;
-    static computeDeterministicId(user: number | string, password: string): string;
-    /** RFC 4122 UUID v5 (SHA-1) - derive a stable terminal id from a strategy name. */
+    /** RFC 4122 UUID v5 (SHA-1) - derive a stable terminal id from a strategy name (same result as Python's uuid.uuid5). */
     static uuid5(namespace: string, name: string): string;
     /** RFC 4122 DNS namespace (same constant as Python's uuid.NAMESPACE_DNS). */
     static NAMESPACE_DNS: string;
-    static openDemoAccount(server?: string, apiKey?: string): Promise<{
+    /**
+     * Opens a new demo account through the API (GET /DemoAccount/Open) and returns its credentials.
+     * @param host the REST host of the platform, e.g. "mt4.mrpc.pro"
+     */
+    static openDemoAccount(server?: string, apiKey?: string, host?: string): Promise<{
         login: number;
         password: string;
         server: string;
@@ -246,21 +270,25 @@ export declare class MT4Client {
     getHeaders(): Record<string, string>;
     getGrpcMetadata(): grpc.Metadata;
     /**
-     * Generic unary call: `client[method](req, metadata, {deadline}, cb)`. Throws MT4Error when the
-     * reply carries an Error payload, returns reply.getData() otherwise.
+     * A unary call `client[method](req, metadata, {deadline}, cb)`: resolves with the reply's data, rejects with
+     * an MrpcError for the reply's error or with the gRPC error of a failed call. Usable with the generated clients
+     * for the methods this class does not wrap.
      */
     call(client: any, method: string, req: any, timeoutMs?: number): Promise<any>;
+    /** The terminal id the server assigns to these credentials (Connection.GetId). Defaults to the last connect()'s. */
     getId(user?: number | string, password?: string): Promise<string>;
     /**
-     * Start (or re-attach to) a terminal on the gateway. With `server` it uses ConnectEx (cluster
-     * name); with `host`/`port` it uses Connect. Pass a stable `id` so re-runs reuse the terminal.
+     * Start (or re-attach to) a terminal on the gateway. With `server` it uses ConnectEx (broker cluster
+     * name, e.g. "TeleTrade-Demo"); with `host`/`port` it uses Connect. Pass a stable `id` so re-runs reuse
+     * the terminal. Short form: `connect(login, password, server)`.
      */
-    connect(loginOrOptions: number | ConnectOptions, password?: string): Promise<boolean>;
+    connect(loginOrOptions: number | ConnectOptions, password?: string, server?: string): Promise<boolean>;
     /** Re-run the last connect() (same id/name) - call it after a TERMINAL_INSTANCE_NOT_FOUND or transport error. */
     reconnect(): Promise<boolean>;
-    /** ConnectionStatus / CheckConnect style liveness probe: true when the terminal answers. */
+    /** CheckConnect liveness probe: true when the terminal answers. */
     checkConnect(): Promise<boolean>;
     static tradeModeName(code: number): 'DEMO' | 'CONTEST' | 'REAL' | 'UNKNOWN';
+    /** AccountSummary: what the server answered (see AccountInfo for where margin lives). */
     getAccountInfo(): Promise<AccountInfo>;
     /** Every symbol name the account can see (one cheap call). */
     symbolList(): Promise<{
@@ -301,10 +329,11 @@ export declare class MT4Client {
      * window is widened automatically (weekends) until enough bars come back.
      */
     lastBars(symbol: string, timeframe: string | number, count: number, utcServerShiftMinutes?: number): Promise<Bar[]>;
-    static orderType(action: OrderAction | number | undefined): number;
+    /** The MT4 operation type of an order command ('BUY', 'SELL_LIMIT', ... or a number). */
+    static orderType(cmd: OrderCommand | number | undefined): number;
     /**
      * Market or pending order. MT4 needs a request price: for market orders it is taken from quote()
-     * when omitted. `slippage` is in points. Throws MT4Error when the broker rejects
+     * when omitted. `slippage` is in points. Rejects with an MrpcError when the broker refuses
      * (e.mqlIntCode: 130 invalid stops, 131 invalid volume, 132 market closed, 134 no money, 138 requote).
      */
     orderSend(req: OrderRequest): Promise<OrderResult>;
@@ -344,10 +373,14 @@ export declare class MT4Client {
     static serverDate(utc: Date, utcServerShiftMinutes: number): Date;
     /** Convert a server-time epoch (seconds) back to a UTC Date. */
     static fromServerSeconds(serverSeconds: number, utcServerShiftMinutes: number): Date;
+    /**
+     * A server stream of the SubscriptionService. An error reply and the stream's failure or end go to `onError`
+     * (a cancelled stream - `unsubscribe()` - is not an error).
+     */
     private stream;
     /**
-     * Tick stream (OnSymbolTick). `onError` fires when the stream ends or fails (not on
-     * unsubscribe); the caller re-subscribes after a transport error.
+     * Tick stream (OnSymbolTick). `onError` receives an error reply of the stream, its failure or its end
+     * (not an unsubscribe); the caller re-subscribes after a transport error.
      */
     subscribeQuotes(symbols: string[], callback: (tick: Tick) => void, onError?: (e: any) => void): Subscription;
     /** OnTrade event stream: fills, modifications, closes. Lists are OrderInfo-like objects. */
@@ -362,7 +395,7 @@ export declare class MT4Client {
         newHistoryOrders: OrderInfo[];
         account: any;
     }) => void, onError?: (e: any) => void): Subscription;
-    /** Periodic snapshot of open orders with live profit + account info (OnOpenedOrdersProfit). */
+    /** Periodic snapshot of open orders with live profit + account info incl. margin (OnOpenedOrdersProfit). */
     subscribeOpenedOrdersProfit(intervalMs: number, callback: (ev: {
         orders: any[];
         account: any;
@@ -374,10 +407,11 @@ export declare class MT4Client {
         serverTime: number;
     }) => void, onError?: (e: any) => void): Subscription;
     /**
-     * Stop the terminal on the gateway and close the channel. Strategies that want their terminal
-     * kept warm between runs should NOT call this - just exit (or close()); the gateway keeps it under the id.
+     * Stop the terminal on the gateway (`deleteTerminal` also deletes it) and close the channel. Rejects when the
+     * server refuses. Strategies that want their terminal kept warm between runs should NOT call this - just
+     * exit (or close()); the gateway keeps the terminal under the id.
      */
-    disconnect(deleteOnDisconnect?: boolean): Promise<void>;
+    disconnect(deleteTerminal?: boolean): Promise<void>;
     /** Close the gRPC channel without touching the terminal on the gateway. */
     close(): void;
 }

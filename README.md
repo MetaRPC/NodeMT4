@@ -12,8 +12,10 @@
 ## 📦 Installation
 
 ```bash
-npm install @metarpc/nodemt4
+npm install github:MetaRPC/NodeMT4
 ```
+
+The package is installed from this repository (it is not published to the npm registry); it is named `@metarpc/nodemt4`, so `require('@metarpc/nodemt4')` works as usual. The generated gRPC stubs are under `@metarpc/nodemt4/package/`.
 
 ---
 

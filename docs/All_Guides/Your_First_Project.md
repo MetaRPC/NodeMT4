@@ -1,65 +1,67 @@
 # Your First Project in 10 Minutes (Node.js)
 
-> **Hands-on Quick Start** - Create a working trading project with MetaTrader 4 and NodeMT4 from scratch.
+> **Hands-on Quick Start** - A working MetaTrader 4 project with NodeMT4 from scratch.
 
 ---
 
-## Step 0: Obtain Your API Key
+## Step 0: API key
 
-To connect to MetaRPC endpoints (`mt4.mrpc.pro:443`), obtain your API key:
-1. Register for free at [https://mrpc.pro/signup](https://mrpc.pro/signup).
-2. Generate your API token in your dashboard at [https://mrpc.pro/my](https://mrpc.pro/my).
-3. Set your token in your environment or connection config.
+1. Register free at [https://mrpc.pro/signup](https://mrpc.pro/signup).
+2. Create your API key at [https://mrpc.pro/my](https://mrpc.pro/my).
+3. Put it in `MRPC_API_KEY`.
 
 ---
 
-## Step 1: Create Your Project
-
-Create a new directory for your trading bot:
+## Step 1: Create the project
 
 ```bash
-mkdir my_nodemt4_bot
-cd my_nodemt4_bot
+mkdir my-mt4-bot
+cd my-mt4-bot
+npm init -y
+npm install github:MetaRPC/NodeMT4 @grpc/grpc-js
 ```
 
-Install the package:
+---
+
+## Step 2: Write the program
+
+Save as `index.js` (it connects, reads the account, buys 0.01 lot of EURUSD and disconnects):
+
+```javascript
+const { MT4Client } = require('@metarpc/nodemt4');
+
+async function main() {
+  const client = new MT4Client('mt4.mrpc.pro', 443, process.env.MRPC_API_KEY);
+  await client.connect({ user: Number(process.env.MT4_LOGIN), password: process.env.MT4_PASSWORD, server: 'TeleTrade-Demo' });
+  try {
+    const account = await client.getAccountInfo();
+    console.log(`Balance: ${account.balance} ${account.currency}, equity ${account.equity}, leverage 1:${account.leverage}`);
+
+    const order = await client.orderSend({ symbol: 'EURUSD', cmd: 'BUY', lots: 0.01, slippage: 30, comment: 'first order' });
+    console.log(`Ticket #${order.ticket}: ${order.lots} lots at ${order.price}`);
+  } finally {
+    await client.disconnect();
+  }
+}
+
+main().catch((err) => { console.error(err.message); process.exit(1); });
+```
+---
+
+## Step 3: Run it
 
 ```bash
-npm install @metarpc/mt4
+export MRPC_API_KEY=your-api-key MT4_LOGIN=your-login MT4_PASSWORD=your-password
+node index.js
 ```
+
+No account yet? `MT4Client.openDemoAccount('TeleTrade-Demo', apiKey)` opens a demo account and returns its login and password;
+[`examples/quickstart.js`](https://github.com/MetaRPC/NodeMT4/blob/main/examples/quickstart.js) does that when no login is set.
 
 ---
 
-## Step 2: Write Your Trading Code
+## Next steps
 
-Create your main application file and paste the following snippet:
-
-```
-import { MT4Account } from '@metarpc/mt4';
-
-// Session ID generation on Connect and authentication are handled automatically
-const account = new MT4Account({ user, password, server: grpcServer, apiKey });
-await account.connectByServerName(serverName, 'EURUSD', 30);
-const summary = await account.accountSummary();
-console.log(`Balance: ${summary.accountBalance}, Equity: ${summary.accountEquity}`);
-```
-
----
-
-## Step 3: Run the Program
-
-Run your application:
-
-```bash
-# Verify connection output
-# Balance: 10000.00, Equity: 10000.00
-```
-
----
-
-## 🚀 Next Steps
-
-Congratulations! You have successfully established a direct gRPC connection to MetaTrader 4. Next:
-- Explore **[gRPC Streaming](GRPC_STREAM_MANAGEMENT.md)** to listen to live ticks.
-- Check the **[API Reference](../API_Reference/MT4Account.md)** for all 40+ available terminal methods.
-- Learn about high-level risk management and auto-normalization in **[MT4Sugar](../API_Reference/MT4Sugar.md)**.
+- **[Quotes](../quotes.md)** - stream ticks with `subscribeQuotes`.
+- **[API Reference](../api.md)** - everything `MT4Client` does, and the generated clients for the rest of the API.
+- **[Streams](STREAMS.md)** - the other streams.

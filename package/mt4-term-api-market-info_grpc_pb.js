@@ -154,7 +154,8 @@ quoteMany: {
     responseSerialize: serialize_mt4_term_api_SymbolsReply,
     responseDeserialize: deserialize_mt4_term_api_SymbolsReply,
   },
-  quoteHistory: {
+  // DEPRECATED: use QuoteHistory.Bars (mt4-term-api-quote-history.proto): paged, bounded, oldest first.
+quoteHistory: {
     path: '/mt4_term_api.MarketInfo/QuoteHistory',
     requestStream: false,
     responseStream: false,

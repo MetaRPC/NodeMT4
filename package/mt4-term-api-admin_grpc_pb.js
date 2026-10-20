@@ -72,6 +72,28 @@ function deserialize_mrpc_admin_CaptureSessionScreenshotRequest(buffer_arg) {
   return mt4$term$api$admin_pb.CaptureSessionScreenshotRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_mrpc_admin_DrainReply(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.DrainReply)) {
+    throw new Error('Expected argument of type mrpc_admin.DrainReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_DrainReply(buffer_arg) {
+  return mt4$term$api$admin_pb.DrainReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mrpc_admin_DrainRequest(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.DrainRequest)) {
+    throw new Error('Expected argument of type mrpc_admin.DrainRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_DrainRequest(buffer_arg) {
+  return mt4$term$api$admin_pb.DrainRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_mrpc_admin_GetAllLogsReply(arg) {
   if (!(arg instanceof mt4$term$api$admin_pb.GetAllLogsReply)) {
     throw new Error('Expected argument of type mrpc_admin.GetAllLogsReply');
@@ -202,6 +224,28 @@ function serialize_mrpc_admin_RefreshMrpcRestReply(arg) {
 
 function deserialize_mrpc_admin_RefreshMrpcRestReply(buffer_arg) {
   return mt4$term$api$admin_pb.RefreshMrpcRestReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mrpc_admin_StopTerminalLocalReply(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.StopTerminalLocalReply)) {
+    throw new Error('Expected argument of type mrpc_admin.StopTerminalLocalReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_StopTerminalLocalReply(buffer_arg) {
+  return mt4$term$api$admin_pb.StopTerminalLocalReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mrpc_admin_StopTerminalLocalRequest(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.StopTerminalLocalRequest)) {
+    throw new Error('Expected argument of type mrpc_admin.StopTerminalLocalRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_StopTerminalLocalRequest(buffer_arg) {
+  return mt4$term$api$admin_pb.StopTerminalLocalRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_mrpc_admin_SystemUsageReply(arg) {
@@ -450,6 +494,36 @@ killAllTrialTerminalsLocal: {
     requestDeserialize: deserialize_mrpc_admin_ActiveTerminalsRequest,
     responseSerialize: serialize_mrpc_admin_KillAllTrialTerminalsReply,
     responseDeserialize: deserialize_mrpc_admin_KillAllTrialTerminalsReply,
+  },
+  // Puts THIS pod into the draining state ahead of shutdown (StatefulSet preStop hook). While draining the
+// pod stops renewing its terminal ownership leases, suppresses crash persistence for terminals ending with
+// the VM, and starts no new work; peers restore its terminals once the leases expire. One-way for the
+// lifetime of the process; calling it again reports already_draining.
+drain: {
+    path: '/mrpc_admin.AdminApi/Drain',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$admin_pb.DrainRequest,
+    responseType: mt4$term$api$admin_pb.DrainReply,
+    requestSerialize: serialize_mrpc_admin_DrainRequest,
+    requestDeserialize: deserialize_mrpc_admin_DrainRequest,
+    responseSerialize: serialize_mrpc_admin_DrainReply,
+    responseDeserialize: deserialize_mrpc_admin_DrainReply,
+  },
+  // Stops THIS pod's local copy of one terminal (pod-to-pod: user-stop fan-out, duplicate prune, rebalance
+// migration). Local only: never forwarded to another pod and never persisted to UserTerminals (the caller
+// records any stop intent). cause is a StopCause name; only customer/API/admin/delete/test stops and
+// InternalReap are accepted. Callers must check reply.error.
+stopTerminalLocal: {
+    path: '/mrpc_admin.AdminApi/StopTerminalLocal',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$admin_pb.StopTerminalLocalRequest,
+    responseType: mt4$term$api$admin_pb.StopTerminalLocalReply,
+    requestSerialize: serialize_mrpc_admin_StopTerminalLocalRequest,
+    requestDeserialize: deserialize_mrpc_admin_StopTerminalLocalRequest,
+    responseSerialize: serialize_mrpc_admin_StopTerminalLocalReply,
+    responseDeserialize: deserialize_mrpc_admin_StopTerminalLocalReply,
   },
 };
 

@@ -8214,7 +8214,8 @@ proto.mt4_term_api.DisconnectRequest.prototype.toObject = function(opt_includeIn
  */
 proto.mt4_term_api.DisconnectRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    reason: jspb.Message.getFieldWithDefault(msg, 1, "")
+    reason: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    pb_delete: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {

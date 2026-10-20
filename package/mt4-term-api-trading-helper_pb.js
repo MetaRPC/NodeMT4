@@ -719,7 +719,8 @@ proto.mt4_term_api.OrderCloseByData.toObject = function(includeInstance, msg) {
   var f, obj = {
     closePrice: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
     profit: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
-    closeTime: (f = msg.getCloseTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    closeTime: (f = msg.getCloseTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    closeTimeUtc: (f = msg.getCloseTimeUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -769,6 +770,11 @@ proto.mt4_term_api.OrderCloseByData.deserializeBinaryFromReader = function(msg, 
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setCloseTime(value);
       break;
+    case 4:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setCloseTimeUtc(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -816,6 +822,14 @@ proto.mt4_term_api.OrderCloseByData.serializeBinaryToWriter = function(message, 
   if (f != null) {
     writer.writeMessage(
       3,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getCloseTimeUtc();
+  if (f != null) {
+    writer.writeMessage(
+      4,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -896,6 +910,43 @@ proto.mt4_term_api.OrderCloseByData.prototype.hasCloseTime = function() {
 };
 
 
+/**
+ * optional google.protobuf.Timestamp close_time_utc = 4;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.OrderCloseByData.prototype.getCloseTimeUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 4));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.OrderCloseByData} returns this
+*/
+proto.mt4_term_api.OrderCloseByData.prototype.setCloseTimeUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.OrderCloseByData} returns this
+ */
+proto.mt4_term_api.OrderCloseByData.prototype.clearCloseTimeUtc = function() {
+  return this.setCloseTimeUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.OrderCloseByData.prototype.hasCloseTimeUtc = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
 
 
 
@@ -937,7 +988,8 @@ proto.mt4_term_api.OrderSendRequest.toObject = function(includeInstance, msg) {
     takeprofit: jspb.Message.getFloatingPointFieldWithDefault(msg, 7, 0.0),
     comment: jspb.Message.getFieldWithDefault(msg, 8, ""),
     magicNumber: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    expiration: (f = msg.getExpiration()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    expiration: (f = msg.getExpiration()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    expirationUtc: (f = msg.getExpirationUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1014,6 +1066,11 @@ proto.mt4_term_api.OrderSendRequest.deserializeBinaryFromReader = function(msg, 
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setExpiration(value);
+      break;
+    case 11:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setExpirationUtc(value);
       break;
     default:
       reader.skipField();
@@ -1111,6 +1168,14 @@ proto.mt4_term_api.OrderSendRequest.serializeBinaryToWriter = function(message, 
   if (f != null) {
     writer.writeMessage(
       10,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getExpirationUtc();
+  if (f != null) {
+    writer.writeMessage(
+      11,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -1425,6 +1490,43 @@ proto.mt4_term_api.OrderSendRequest.prototype.hasExpiration = function() {
 };
 
 
+/**
+ * optional google.protobuf.Timestamp expiration_utc = 11;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.OrderSendRequest.prototype.getExpirationUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 11));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.OrderSendRequest} returns this
+*/
+proto.mt4_term_api.OrderSendRequest.prototype.setExpirationUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 11, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.OrderSendRequest} returns this
+ */
+proto.mt4_term_api.OrderSendRequest.prototype.clearExpirationUtc = function() {
+  return this.setExpirationUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.OrderSendRequest.prototype.hasExpirationUtc = function() {
+  return jspb.Message.getField(this, 11) != null;
+};
+
+
 
 /**
  * Oneof group definitions for this message. Each group defines the field
@@ -1688,7 +1790,8 @@ proto.mt4_term_api.OrderSendData.toObject = function(includeInstance, msg) {
     ticket: jspb.Message.getFieldWithDefault(msg, 1, 0),
     volume: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
     price: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
-    openTime: (f = msg.getOpenTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    openTime: (f = msg.getOpenTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    openTimeUtc: (f = msg.getOpenTimeUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1741,6 +1844,11 @@ proto.mt4_term_api.OrderSendData.deserializeBinaryFromReader = function(msg, rea
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setOpenTime(value);
+      break;
+    case 5:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setOpenTimeUtc(value);
       break;
     default:
       reader.skipField();
@@ -1796,6 +1904,14 @@ proto.mt4_term_api.OrderSendData.serializeBinaryToWriter = function(message, wri
   if (f != null) {
     writer.writeMessage(
       4,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getOpenTimeUtc();
+  if (f != null) {
+    writer.writeMessage(
+      5,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -1894,6 +2010,43 @@ proto.mt4_term_api.OrderSendData.prototype.hasOpenTime = function() {
 };
 
 
+/**
+ * optional google.protobuf.Timestamp open_time_utc = 5;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.OrderSendData.prototype.getOpenTimeUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 5));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.OrderSendData} returns this
+*/
+proto.mt4_term_api.OrderSendData.prototype.setOpenTimeUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.OrderSendData} returns this
+ */
+proto.mt4_term_api.OrderSendData.prototype.clearOpenTimeUtc = function() {
+  return this.setOpenTimeUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.OrderSendData.prototype.hasOpenTimeUtc = function() {
+  return jspb.Message.getField(this, 5) != null;
+};
+
+
 
 
 
@@ -1930,7 +2083,8 @@ proto.mt4_term_api.OrderModifyRequest.toObject = function(includeInstance, msg) 
     newPrice: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
     newStopLoss: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0),
     newTakeProfit: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
-    newExpiration: (f = msg.getNewExpiration()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    newExpiration: (f = msg.getNewExpiration()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    newExpirationUtc: (f = msg.getNewExpirationUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1987,6 +2141,11 @@ proto.mt4_term_api.OrderModifyRequest.deserializeBinaryFromReader = function(msg
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setNewExpiration(value);
+      break;
+    case 6:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setNewExpirationUtc(value);
       break;
     default:
       reader.skipField();
@@ -2049,6 +2208,14 @@ proto.mt4_term_api.OrderModifyRequest.serializeBinaryToWriter = function(message
   if (f != null) {
     writer.writeMessage(
       5,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getNewExpirationUtc();
+  if (f != null) {
+    writer.writeMessage(
+      6,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
     );
@@ -2216,6 +2383,43 @@ proto.mt4_term_api.OrderModifyRequest.prototype.clearNewExpiration = function() 
  */
 proto.mt4_term_api.OrderModifyRequest.prototype.hasNewExpiration = function() {
   return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp new_expiration_utc = 6;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mt4_term_api.OrderModifyRequest.prototype.getNewExpirationUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 6));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mt4_term_api.OrderModifyRequest} returns this
+*/
+proto.mt4_term_api.OrderModifyRequest.prototype.setNewExpirationUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mt4_term_api.OrderModifyRequest} returns this
+ */
+proto.mt4_term_api.OrderModifyRequest.prototype.clearNewExpirationUtc = function() {
+  return this.setNewExpirationUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mt4_term_api.OrderModifyRequest.prototype.hasNewExpirationUtc = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 
