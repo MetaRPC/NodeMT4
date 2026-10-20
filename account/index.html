@@ -792,12 +792,20 @@
 </thead>
 <tbody>
 <tr>
-<td><code>login</code>, <code>name</code></td>
-<td>account number and owner name (<code>AccountSummary</code>)</td>
+<td><code>login</code>, <code>name</code>, <code>company</code></td>
+<td>account number, owner name and broker company (<code>AccountSummary</code>)</td>
 </tr>
 <tr>
-<td><code>balance</code>, <code>equity</code>, <code>currency</code>, <code>leverage</code></td>
+<td><code>balance</code>, <code>equity</code>, <code>credit</code>, <code>currency</code>, <code>leverage</code>, <code>isInvestor</code></td>
 <td><code>AccountSummary</code></td>
+</tr>
+<tr>
+<td><code>tradeMode</code> (<code>DEMO</code>, <code>CONTEST</code>, <code>REAL</code>), <code>tradeModeCode</code></td>
+<td><code>AccountSummary</code> - check it before trading on an account you did not expect to be real</td>
+</tr>
+<tr>
+<td><code>serverTime</code>, <code>utcServerShiftMinutes</code></td>
+<td>the broker server clock (seconds) and its offset from UTC in minutes: every timestamp the API returns is server time</td>
 </tr>
 <tr>
 <td><code>server</code></td>
@@ -805,8 +813,9 @@
 </tr>
 </tbody>
 </table>
-<p>MT4's <code>AccountSummary</code> has no margin values. They come with the trade streams instead: <code>OnOpenedOrdersProfit</code>
-(<code>SubscriptionsGrpc</code>) sends <code>account_info</code> with <code>margin</code>, <code>free_margin</code> and <code>margin_level</code> every <code>timer_period_milliseconds</code>.</p>
+<p>MT4's <code>AccountSummary</code> has no margin values. They come with the trade streams instead:
+<code>client.subscribeOpenedOrdersProfit(intervalMs, ...)</code> (<code>OnOpenedOrdersProfit</code>) delivers <code>account</code> with <code>margin</code>,
+<code>freeMargin</code> and <code>marginLevel</code> every <code>intervalMs</code>.</p>
 
 
 

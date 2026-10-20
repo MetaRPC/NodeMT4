@@ -893,32 +893,104 @@ the gRPC error. Nothing is invented on failure.</p>
 <td>the same, short form</td>
 </tr>
 <tr>
+<td><code>connect({ ..., id, name, expiration })</code></td>
+<td><code>id</code>: a stable terminal id of your own (re-runs re-attach to the same terminal; <code>MT4Client.uuid5()</code> derives one); <code>name</code>: the label shown by <code>GET /Accounts</code></td>
+</tr>
+<tr>
+<td><code>reconnect()</code></td>
+<td>runs the last <code>connect()</code> again with the same id and name (after <code>TERMINAL_INSTANCE_NOT_FOUND</code> or a channel failure)</td>
+</tr>
+<tr>
+<td><code>checkConnect(): Promise&lt;boolean&gt;</code></td>
+<td><code>CheckConnect</code>: whether the terminal answers</td>
+</tr>
+<tr>
 <td><code>getAccountInfo(): Promise&lt;AccountInfo&gt;</code></td>
 <td>see <a href="../account/">Account</a></td>
+</tr>
+<tr>
+<td><code>symbolList()</code>, <code>symbolSelect(symbol, select = true)</code>, <code>ensureSymbol(symbol, waitMs?)</code></td>
+<td><code>Symbols</code>, <code>SymbolSelect</code>; <code>ensureSymbol</code> selects and waits for a two-sided quote</td>
+</tr>
+<tr>
+<td><code>quote(symbol)</code>, <code>quoteMany(symbols)</code></td>
+<td><code>Quote</code>, <code>QuoteMany</code>: <code>{ symbol, bid, ask, high, low, time }</code></td>
+</tr>
+<tr>
+<td><code>symbolParams(symbol)</code>, <code>symbolParamsAll()</code>, <code>tickValueWithSize(symbols)</code></td>
+<td><code>SymbolParamsMany</code>, <code>TickValueWithSize</code>: contract specifications, see <a href="../quotes/">Quotes</a></td>
+</tr>
+<tr>
+<td><code>quoteHistory(symbol, timeframe, from, to)</code>, <code>lastBars(symbol, timeframe, count, utcServerShiftMinutes?)</code></td>
+<td><code>QuoteHistory</code>: bars, see <a href="../quotes/">Quotes</a></td>
 </tr>
 <tr>
 <td><code>orderSend(request): Promise&lt;OrderResult&gt;</code></td>
 <td>see <a href="../trading/">Trading</a></td>
 </tr>
 <tr>
-<td><code>subscribeQuotes(symbols, onQuote, onError?)</code></td>
+<td><code>orderModify({ ticket, stopLoss, takeProfit, price?, expiration? })</code></td>
+<td><code>OrderModify</code></td>
+</tr>
+<tr>
+<td><code>orderClose({ ticket, volume?, price?, slippage? })</code>, <code>orderCloseBy(ticket, oppositeTicket)</code></td>
+<td><code>OrderCloseDelete</code> (close, partial close, delete a pending order), <code>OrderCloseBy</code></td>
+</tr>
+<tr>
+<td><code>openedOrders()</code>, <code>positions(magic?)</code>, <code>pendingOrders(magic?)</code>, <code>openedOrdersTickets()</code></td>
+<td><code>OpenedOrders</code>, <code>OpenedOrdersTickets</code>: open market / pending orders, optionally those with a magic number</td>
+</tr>
+<tr>
+<td><code>ordersHistory(from, to, { sort, page, perPage }?)</code></td>
+<td><code>OrdersHistory</code>: closed orders in a server-time window, <code>{ totalCount, orders }</code></td>
+</tr>
+<tr>
+<td><code>subscribeQuotes(symbols, onTick, onError?)</code></td>
 <td><code>OnSymbolTick</code> stream; returns <code>{ unsubscribe() }</code>, see <a href="../quotes/">Quotes</a></td>
+</tr>
+<tr>
+<td><code>subscribeTrades(onEvent, onError?)</code></td>
+<td><code>OnTrade</code> stream: new / updated / removed / history orders with the account snapshot</td>
+</tr>
+<tr>
+<td><code>subscribeOpenedOrdersProfit(intervalMs, onSnapshot, onError?)</code></td>
+<td><code>OnOpenedOrdersProfit</code> stream: open orders with live profit and the account's margin values</td>
+</tr>
+<tr>
+<td><code>subscribeOpenedOrdersTickets(intervalMs, onTickets, onError?)</code></td>
+<td><code>OnOpenedOrdersTickets</code> stream</td>
 </tr>
 <tr>
 <td><code>disconnect(deleteTerminal = false)</code></td>
 <td><code>Disconnect</code>; <code>true</code> also deletes the terminal. Closes the channel</td>
 </tr>
 <tr>
+<td><code>close()</code></td>
+<td>closes the channel only; the terminal stays on the server under its id</td>
+</tr>
+<tr>
 <td><code>getId(login, password): Promise&lt;string&gt;</code></td>
 <td><code>GetId</code>: the terminal id for these credentials</td>
+</tr>
+<tr>
+<td><code>call(client, method, request, timeoutMs?)</code></td>
+<td>one unary call through any generated client with the client's metadata: resolves with the reply's <code>data</code>, rejects with <code>MrpcError</code></td>
 </tr>
 <tr>
 <td><code>MT4Client.openDemoAccount(server, apiKey, host = 'mt4.mrpc.pro')</code></td>
 <td><code>GET /DemoAccount/Open</code>: a new demo account <code>{ login, password, server }</code></td>
 </tr>
 <tr>
-<td><code>client.id</code>, <code>client.connected</code></td>
-<td>the terminal id after <code>connect()</code>; whether <code>connect()</code> succeeded</td>
+<td><code>MT4Client.uuid5(namespace, name)</code>, <code>MT4Client.NAMESPACE_DNS</code></td>
+<td>RFC 4122 UUID v5 (same result as Python's <code>uuid.uuid5</code>) for stable terminal ids</td>
+</tr>
+<tr>
+<td><code>MT4Client.serverDate(utc, shiftMinutes)</code>, <code>MT4Client.fromServerSeconds(seconds, shiftMinutes)</code></td>
+<td>UTC &lt;-&gt; broker server time (<code>utcServerShiftMinutes</code> of <code>getAccountInfo()</code>)</td>
+</tr>
+<tr>
+<td><code>client.id</code>, <code>client.name</code>, <code>client.connected</code></td>
+<td>the terminal id and label after <code>connect()</code>; whether <code>connect()</code> succeeded</td>
 </tr>
 <tr>
 <td><code>getGrpcMetadata()</code></td>
@@ -926,13 +998,15 @@ the gRPC error. Nothing is invented on failure.</p>
 </tr>
 </tbody>
 </table>
+<p><code>MrpcError</code> (alias <code>MT4Error</code>): <code>code</code>, <code>message</code>, <code>error</code> (the reply's error message), <code>mqlIntCode</code> / <code>mqlDescription</code>
+(the MT4 error number and text of a refused trade), <code>isInvalidLogin</code>, <code>isTerminalLost</code>. <code>TIMEFRAMES</code> (<code>M1</code> ... <code>MN1</code>)
+and <code>ORDER_TYPES</code> (<code>BUY</code> = 0 ... <code>SELL_STOP</code> = 5) are exported too.</p>
 <h3 id="everything-else">Everything else<a class="headerlink" href="#everything-else" title="Permanent link">¶</a></h3>
-<p>The client covers connecting, the account, market orders and ticks. Every other method of the API (positions, history,
-symbol information, order modify/close, other streams) is in the generated gRPC clients the package exports
+<p>Every other method of the API (charts, trade statistics, admin, ...) is in the generated gRPC clients the package exports
 (<code>ConnectionGrpc</code>, <code>AccountHelperGrpc</code>, <code>TradingHelperGrpc</code>, <code>SubscriptionsGrpc</code>, <code>MarketInfoGrpc</code>, ... with their <code>*Pb</code>
-messages) and under <code>@metarpc/nodemt4/package/</code>. Call them on the same host with <code>client.getGrpcMetadata()</code>; every reply has
-<code>data</code> or <code>error</code>. Every method, its request and reply: <a href="../API_Reference/methods/">API methods</a>; try them at
-<a href="https://mt4.mrpc.pro/apiui">https://mt4.mrpc.pro/apiui</a>.</p>
+messages) and under <code>@metarpc/nodemt4/package/</code>. Call them on the same host with <code>client.call(...)</code> or
+<code>client.getGrpcMetadata()</code>; every reply has <code>data</code> or <code>error</code>. Every method, its request and reply:
+<a href="../API_Reference/methods/">API methods</a>; try them at <a href="https://mt4.mrpc.pro/apiui">https://mt4.mrpc.pro/apiui</a>.</p>
 
 
 

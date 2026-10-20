@@ -859,14 +859,20 @@
 <p><code>connect()</code> resolves once the terminal is connected and rejects with an <code>MrpcError</code> when the server refuses (wrong
 password, unknown server, ...). To connect by address instead of broker server name, pass <code>host</code> and <code>port</code> instead of
 <code>server</code>.</p>
-<p>There is no automatic reconnect in the client: if a call rejects with <code>TERMINAL_INSTANCE_NOT_FOUND</code> or the channel fails,
-call <code>connect()</code> again.</p>
+<p>There is no automatic reconnect in the client: if a call rejects with <code>TERMINAL_INSTANCE_NOT_FOUND</code>
+(<code>err.isTerminalLost</code>) or the channel fails, call <code>client.reconnect()</code> (the last <code>connect()</code> again, same id and name).
+Never retry an <code>err.isInvalidLogin</code> error: brokers lock accounts. <code>client.close()</code> closes the channel and leaves the
+terminal running on the server; the next <code>connect()</code> with the same <code>id</code> re-attaches to it in well under a second
+instead of starting a terminal (about 10-15 s).</p>
 <h2 id="api-key-and-terminal-id">API key and terminal id<a class="headerlink" href="#api-key-and-terminal-id" title="Permanent link">¶</a></h2>
 <ul>
 <li><strong><code>APIKey</code></strong>: your key from <a href="https://mrpc.pro/my">https://mrpc.pro/my</a> (sign up free at <a href="https://mrpc.pro/signup">https://mrpc.pro/signup</a>).
   Pass it to the constructor or set <code>MRPC_API_KEY</code>; without one the client sends <code>TRIAL</code>.</li>
 <li><strong><code>id</code></strong>: the terminal id. <code>connect()</code> receives it from the server (<code>terminalInstanceGuid</code>), keeps it in <code>client.id</code> and
-  sends it with every later call and stream. You don't need to call <code>getId()</code> first.</li>
+  sends it with every later call and stream. You don't need to call <code>getId()</code> first. To keep one terminal per strategy
+  across runs, pass your own stable id and a label: <code>connect({ ..., id: MT4Client.uuid5(MT4Client.NAMESPACE_DNS, 'my-strategy'),
+  name: 'my-strategy', timeoutSeconds: 120 })</code> - the name is what <code>GET /Accounts</code> shows, <code>timeoutSeconds</code> is how long the
+  server waits for the terminal to start.</li>
 </ul>
 
 

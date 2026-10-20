@@ -487,6 +487,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quotes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -503,6 +521,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#symbols-specifications-bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbols, specifications, bars
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -760,6 +808,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#symbols-specifications-bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symbols, specifications, bars
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -786,9 +853,20 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// later</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nx">sub</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span>
 </code></pre></div>
-<p><code>quote.time</code> is the tick time in milliseconds since the epoch (UTC). <code>onError</code> receives an error the stream answers with
-(for example <code>NO_CHARTS_OPENED_FOR_SYMBOLS</code> for a symbol the terminal doesn't have) or the stream's failure; an
-<code>unsubscribe()</code> is not an error. Bars and other market data are in the generated <code>MarketInfoGrpc</code> client.</p>
+<p><code>quote.time</code> is the tick time in milliseconds since the epoch, broker server time as the API reports it (<code>quote.timeUtc</code>
+is the UTC time when the server sends one). <code>onError</code> receives an error the stream answers with (for example
+<code>NO_CHARTS_OPENED_FOR_SYMBOLS</code> for a symbol the terminal doesn't have), the stream's failure or its end; an
+<code>unsubscribe()</code> is not an error. There is no automatic re-subscription: subscribe again after an error.</p>
+<h2 id="symbols-specifications-bars">Symbols, specifications, bars<a class="headerlink" href="#symbols-specifications-bars" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">symbolList</span><span class="p">()).</span><span class="nx">map</span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">s</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">ensureSymbol</span><span class="p">(</span><span class="s1">'XAUUSD'</span><span class="p">);</span><span class="w">            </span><span class="c1">// selects the symbol in Market Watch and waits for a two-sided quote</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">symbolParams</span><span class="p">(</span><span class="s1">'EURUSD'</span><span class="p">);</span><span class="w">          </span><span class="c1">// digits, point, volumeMin/Max/Step, stopsLevel, tickValue, tickSize, tradeMode, ...</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">bars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">lastBars</span><span class="p">(</span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="s1">'M1'</span><span class="p">,</span><span class="w"> </span><span class="mf">50</span><span class="p">,</span><span class="w"> </span><span class="nx">account</span><span class="p">.</span><span class="nx">utcServerShiftMinutes</span><span class="p">);</span><span class="w">   </span><span class="c1">// newest 50 bars, ascending</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">const</span><span class="w"> </span><span class="nb">window</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">quoteHistory</span><span class="p">(</span><span class="s1">'EURUSD'</span><span class="p">,</span><span class="w"> </span><span class="s1">'H1'</span><span class="p">,</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="nx">to</span><span class="p">);</span><span class="w">                      </span><span class="c1">// from/to in broker server time</span>
+</code></pre></div>
+<p>A symbol that is not in Market Watch (most are not, by default) answers <code>bid == ask == 0</code> for a few seconds after it is
+selected: <code>ensureSymbol()</code> waits for it. <code>TIMEFRAMES</code> holds the timeframe names (<code>M1</code> ... <code>MN1</code>); <code>quoteHistory</code> has no bar
+count, the window decides. <code>spec.bid</code> is a stale snapshot: prices come from <code>quote()</code> and <code>subscribeQuotes()</code>.</p>
 
 
 

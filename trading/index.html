@@ -459,6 +459,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trading
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -475,6 +493,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#modify-close-open-orders-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modify, close, open orders, history
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -760,6 +808,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#modify-close-open-orders-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modify, close, open orders, history
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -792,22 +859,29 @@
 <tbody>
 <tr>
 <td>Request</td>
-<td><code>symbol</code>, <code>cmd</code> (<code>BUY</code>, <code>SELL</code>, <code>BUY_LIMIT</code>, <code>SELL_LIMIT</code>, <code>BUY_STOP</code>, <code>SELL_STOP</code>), <code>lots</code>, optional <code>price</code>, <code>slippage</code>, <code>stopLoss</code>, <code>takeProfit</code>, <code>comment</code>, <code>magicNumber</code></td>
+<td><code>symbol</code>, <code>cmd</code> (<code>BUY</code>, <code>SELL</code>, <code>BUY_LIMIT</code>, <code>SELL_LIMIT</code>, <code>BUY_STOP</code>, <code>SELL_STOP</code>), <code>lots</code>, optional <code>price</code>, <code>slippage</code> (points), <code>stopLoss</code>, <code>takeProfit</code>, <code>comment</code>, <code>magicNumber</code>, <code>expiration</code> (pending orders, server time). <code>action</code>, <code>volume</code> and <code>magic</code> are accepted as aliases</td>
 </tr>
 <tr>
 <td>Result</td>
-<td><code>ticket</code>, <code>lots</code>, <code>price</code>, <code>comment</code> (the one you sent); <code>errorCode</code> is always 0</td>
-</tr>
-<tr>
-<td>An order the server refuses rejects with an <code>MrpcError</code> carrying the server's error code. Modifying and closing orders is</td>
-<td></td>
-</tr>
-<tr>
-<td>done with the generated <code>TradingHelperGrpc</code> client (see <a href="../api/#everything-else">API Reference</a>).</td>
-<td></td>
+<td><code>ticket</code>, <code>lots</code> (= <code>volume</code>), <code>price</code> (the fill), <code>openTime</code> (seconds, server time), <code>comment</code> (the one you sent); <code>errorCode</code> is always 0</td>
 </tr>
 </tbody>
 </table>
+<p>MT4 needs a request price: for a market order without <code>price</code> the client takes the current quote (ask for a buy, bid for
+a sell). An order the server refuses rejects with an <code>MrpcError</code> carrying the server's error code and, for a trade the
+terminal refused, the MT4 error number in <code>mqlIntCode</code> (130 invalid stops, 131 invalid volume, 132 market closed,
+134 not enough money, 138 requote) with its text in <code>mqlDescription</code>.</p>
+<h2 id="modify-close-open-orders-history">Modify, close, open orders, history<a class="headerlink" href="#modify-close-open-orders-history" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderModify</span><span class="p">({</span><span class="w"> </span><span class="nx">ticket</span><span class="o">:</span><span class="w"> </span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="p">,</span><span class="w"> </span><span class="nx">stopLoss</span><span class="o">:</span><span class="w"> </span><span class="mf">1.0950</span><span class="p">,</span><span class="w"> </span><span class="nx">takeProfit</span><span class="o">:</span><span class="w"> </span><span class="mf">1.1050</span><span class="w"> </span><span class="p">});</span><span class="w">   </span><span class="c1">// send every value you want kept</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderClose</span><span class="p">({</span><span class="w"> </span><span class="nx">ticket</span><span class="o">:</span><span class="w"> </span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="w"> </span><span class="p">});</span><span class="w">                      </span><span class="c1">// whole order at the current quote; `volume` for a partial close</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderClose</span><span class="p">({</span><span class="w"> </span><span class="nx">ticket</span><span class="o">:</span><span class="w"> </span><span class="nx">pending</span><span class="p">.</span><span class="nx">ticket</span><span class="w"> </span><span class="p">});</span><span class="w">                    </span><span class="c1">// deletes a pending order</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">orderCloseBy</span><span class="p">(</span><span class="nx">order</span><span class="p">.</span><span class="nx">ticket</span><span class="p">,</span><span class="w"> </span><span class="nx">oppositeOrder</span><span class="p">.</span><span class="nx">ticket</span><span class="p">);</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kd">const</span><span class="w"> </span><span class="nx">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">positions</span><span class="p">(</span><span class="mf">42</span><span class="p">);</span><span class="w">          </span><span class="c1">// open market orders with magic number 42 (`openedOrders()` for everything)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="kd">const</span><span class="w"> </span><span class="nx">history</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">ordersHistory</span><span class="p">(</span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="nx">to</span><span class="p">);</span><span class="w">   </span><span class="c1">// closed orders in a window of broker server time: { totalCount, orders }</span>
+</code></pre></div>
+<p>Every order is its own ticket (MT4 has no netting). All times are broker server time: <code>getAccountInfo().utcServerShiftMinutes</code>
+and <code>MT4Client.serverDate()</code> convert from UTC.</p>
 
 
 
