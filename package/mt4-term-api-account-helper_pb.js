@@ -31,6 +31,7 @@ goog.exportSymbol('proto.mt4_term_api.AccountSummaryData', null, global);
 goog.exportSymbol('proto.mt4_term_api.AccountSummaryReply', null, global);
 goog.exportSymbol('proto.mt4_term_api.AccountSummaryReply.ResponseCase', null, global);
 goog.exportSymbol('proto.mt4_term_api.AccountSummaryRequest', null, global);
+goog.exportSymbol('proto.mt4_term_api.EnumAccountMarginMode', null, global);
 goog.exportSymbol('proto.mt4_term_api.EnumAccountTradeMode', null, global);
 goog.exportSymbol('proto.mt4_term_api.EnumOpenedOrderSortType', null, global);
 goog.exportSymbol('proto.mt4_term_api.EnumOrderHistorySortType', null, global);
@@ -898,7 +899,13 @@ proto.mt4_term_api.AccountSummaryData.toObject = function(includeInstance, msg) 
     accountCredit: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
     isInvestor: jspb.Message.getBooleanFieldWithDefault(msg, 11, false),
     utcServerTimeShiftMinutes: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    serverUtcOffsetSeconds: jspb.Message.getFieldWithDefault(msg, 14, 0)
+    serverUtcOffsetSeconds: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    accountMargin: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
+    accountMarginFree: jspb.Message.getFloatingPointFieldWithDefault(msg, 16, 0.0),
+    accountMarginLevel: jspb.Message.getFloatingPointFieldWithDefault(msg, 17, 0.0),
+    accountMarginMode: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    accountTradeAllowed: jspb.Message.getBooleanFieldWithDefault(msg, 19, false),
+    accountTradeExpert: jspb.Message.getBooleanFieldWithDefault(msg, 20, false)
   };
 
   if (includeInstance) {
@@ -992,6 +999,30 @@ proto.mt4_term_api.AccountSummaryData.deserializeBinaryFromReader = function(msg
     case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setServerUtcOffsetSeconds(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setAccountMargin(value);
+      break;
+    case 16:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setAccountMarginFree(value);
+      break;
+    case 17:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setAccountMarginLevel(value);
+      break;
+    case 18:
+      var value = /** @type {!proto.mt4_term_api.EnumAccountMarginMode} */ (reader.readEnum());
+      msg.setAccountMarginMode(value);
+      break;
+    case 19:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setAccountTradeAllowed(value);
+      break;
+    case 20:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setAccountTradeExpert(value);
       break;
     default:
       reader.skipField();
@@ -1119,6 +1150,48 @@ proto.mt4_term_api.AccountSummaryData.serializeBinaryToWriter = function(message
   if (f != null) {
     writer.writeInt32(
       14,
+      f
+    );
+  }
+  f = message.getAccountMargin();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      13,
+      f
+    );
+  }
+  f = message.getAccountMarginFree();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      16,
+      f
+    );
+  }
+  f = message.getAccountMarginLevel();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      17,
+      f
+    );
+  }
+  f = message.getAccountMarginMode();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      18,
+      f
+    );
+  }
+  f = message.getAccountTradeAllowed();
+  if (f) {
+    writer.writeBool(
+      19,
+      f
+    );
+  }
+  f = message.getAccountTradeExpert();
+  if (f) {
+    writer.writeBool(
+      20,
       f
     );
   }
@@ -1430,6 +1503,114 @@ proto.mt4_term_api.AccountSummaryData.prototype.clearServerUtcOffsetSeconds = fu
  */
 proto.mt4_term_api.AccountSummaryData.prototype.hasServerUtcOffsetSeconds = function() {
   return jspb.Message.getField(this, 14) != null;
+};
+
+
+/**
+ * optional double account_margin = 13;
+ * @return {number}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountMargin = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 13, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountMargin = function(value) {
+  return jspb.Message.setProto3FloatField(this, 13, value);
+};
+
+
+/**
+ * optional double account_margin_free = 16;
+ * @return {number}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountMarginFree = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 16, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountMarginFree = function(value) {
+  return jspb.Message.setProto3FloatField(this, 16, value);
+};
+
+
+/**
+ * optional double account_margin_level = 17;
+ * @return {number}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountMarginLevel = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 17, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountMarginLevel = function(value) {
+  return jspb.Message.setProto3FloatField(this, 17, value);
+};
+
+
+/**
+ * optional EnumAccountMarginMode account_margin_mode = 18;
+ * @return {!proto.mt4_term_api.EnumAccountMarginMode}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountMarginMode = function() {
+  return /** @type {!proto.mt4_term_api.EnumAccountMarginMode} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/**
+ * @param {!proto.mt4_term_api.EnumAccountMarginMode} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountMarginMode = function(value) {
+  return jspb.Message.setProto3EnumField(this, 18, value);
+};
+
+
+/**
+ * optional bool account_trade_allowed = 19;
+ * @return {boolean}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountTradeAllowed = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 19, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountTradeAllowed = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 19, value);
+};
+
+
+/**
+ * optional bool account_trade_expert = 20;
+ * @return {boolean}
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.getAccountTradeExpert = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 20, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.mt4_term_api.AccountSummaryData} returns this
+ */
+proto.mt4_term_api.AccountSummaryData.prototype.setAccountTradeExpert = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 20, value);
 };
 
 
@@ -8633,6 +8814,15 @@ proto.mt4_term_api.SymbolTickValueWithSizeInfo.prototype.setTradecontractsize = 
 /**
  * @enum {number}
  */
+proto.mt4_term_api.EnumAccountMarginMode = {
+  ACCOUNT_MARGIN_MODE_RETAIL_NETTING: 0,
+  ACCOUNT_MARGIN_MODE_EXCHANGE: 1,
+  ACCOUNT_MARGIN_MODE_RETAIL_HEDGING: 2
+};
+
+/**
+ * @enum {number}
+ */
 proto.mt4_term_api.EnumAccountTradeMode = {
   ACCOUNT_TRADE_MODE_DEMO: 0,
   ACCOUNT_TRADE_MODE_CONTEST: 1,
@@ -8658,7 +8848,9 @@ proto.mt4_term_api.OpenedOrderType = {
   OO_OP_BUYLIMIT: 2,
   OO_OP_SELLLIMIT: 3,
   OO_OP_BUYSTOP: 4,
-  OO_OP_SELLSTOP: 5
+  OO_OP_SELLSTOP: 5,
+  OO_OP_BALANCE: 6,
+  OO_OP_CREDIT: 7
 };
 
 /**

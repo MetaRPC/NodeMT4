@@ -4,6 +4,28 @@
 var grpc = require('@grpc/grpc-js');
 var mt4$term$api$gui_pb = require('./mt4-term-api-gui_pb.js');
 
+function serialize_mt4_term_api_GuiDemoFindCompaniesReply(arg) {
+  if (!(arg instanceof mt4$term$api$gui_pb.GuiDemoFindCompaniesReply)) {
+    throw new Error('Expected argument of type mt4_term_api.GuiDemoFindCompaniesReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_GuiDemoFindCompaniesReply(buffer_arg) {
+  return mt4$term$api$gui_pb.GuiDemoFindCompaniesReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mt4_term_api_GuiDemoFindCompaniesRequest(arg) {
+  if (!(arg instanceof mt4$term$api$gui_pb.GuiDemoFindCompaniesRequest)) {
+    throw new Error('Expected argument of type mt4_term_api.GuiDemoFindCompaniesRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_GuiDemoFindCompaniesRequest(buffer_arg) {
+  return mt4$term$api$gui_pb.GuiDemoFindCompaniesRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_mt4_term_api_GuiDemoInteractiveClientMessage(arg) {
   if (!(arg instanceof mt4$term$api$gui_pb.GuiDemoInteractiveClientMessage)) {
     throw new Error('Expected argument of type mt4_term_api.GuiDemoInteractiveClientMessage');
@@ -48,10 +70,54 @@ function deserialize_mt4_term_api_GuiDemoOpenAccountRequest(buffer_arg) {
   return mt4$term$api$gui_pb.GuiDemoOpenAccountRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_mt4_term_api_GuiDemoServersAndTypesReply(arg) {
+  if (!(arg instanceof mt4$term$api$gui_pb.GuiDemoServersAndTypesReply)) {
+    throw new Error('Expected argument of type mt4_term_api.GuiDemoServersAndTypesReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_GuiDemoServersAndTypesReply(buffer_arg) {
+  return mt4$term$api$gui_pb.GuiDemoServersAndTypesReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mt4_term_api_GuiDemoServersAndTypesRequest(arg) {
+  if (!(arg instanceof mt4$term$api$gui_pb.GuiDemoServersAndTypesRequest)) {
+    throw new Error('Expected argument of type mt4_term_api.GuiDemoServersAndTypesRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mt4_term_api_GuiDemoServersAndTypesRequest(buffer_arg) {
+  return mt4$term$api$gui_pb.GuiDemoServersAndTypesRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // Terminal-side GUI-automation service (implemented by mt4-framework-grpc, which
 // P/Invokes mt4-term-gui.dll). The manager's DemoAccount service proxies to these.
 var GuiService = exports.GuiService = {
+  demoFindCompanies: {
+    path: '/mt4_term_api.Gui/DemoFindCompanies',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$gui_pb.GuiDemoFindCompaniesRequest,
+    responseType: mt4$term$api$gui_pb.GuiDemoFindCompaniesReply,
+    requestSerialize: serialize_mt4_term_api_GuiDemoFindCompaniesRequest,
+    requestDeserialize: deserialize_mt4_term_api_GuiDemoFindCompaniesRequest,
+    responseSerialize: serialize_mt4_term_api_GuiDemoFindCompaniesReply,
+    responseDeserialize: deserialize_mt4_term_api_GuiDemoFindCompaniesReply,
+  },
+  demoServersAndTypes: {
+    path: '/mt4_term_api.Gui/DemoServersAndTypes',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$gui_pb.GuiDemoServersAndTypesRequest,
+    responseType: mt4$term$api$gui_pb.GuiDemoServersAndTypesReply,
+    requestSerialize: serialize_mt4_term_api_GuiDemoServersAndTypesRequest,
+    requestDeserialize: deserialize_mt4_term_api_GuiDemoServersAndTypesRequest,
+    responseSerialize: serialize_mt4_term_api_GuiDemoServersAndTypesReply,
+    responseDeserialize: deserialize_mt4_term_api_GuiDemoServersAndTypesReply,
+  },
   demoOpenAccount: {
     path: '/mt4_term_api.Gui/DemoOpenAccount',
     requestStream: false,
