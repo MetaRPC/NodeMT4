@@ -2394,7 +2394,10 @@ proto.mt4_term_api.StatsData.toObject = function(includeInstance, msg) {
     zScore: (f = msg.getZScore()) && proto.mt4_term_api.ZScoreData.toObject(includeInstance, f),
     expectancy: (f = msg.getExpectancy()) && proto.mt4_term_api.ExpectancyData.toObject(includeInstance, f),
     ghpr: jspb.Message.getFloatingPointFieldWithDefault(msg, 25, 0.0),
-    trades: jspb.Message.getFieldWithDefault(msg, 26, 0)
+    trades: jspb.Message.getFieldWithDefault(msg, 26, 0),
+    growthPercent: jspb.Message.getFloatingPointFieldWithDefault(msg, 27, 0.0),
+    deposits: jspb.Message.getFloatingPointFieldWithDefault(msg, 28, 0.0),
+    withdrawals: jspb.Message.getFloatingPointFieldWithDefault(msg, 29, 0.0)
   };
 
   if (includeInstance) {
@@ -2547,6 +2550,18 @@ proto.mt4_term_api.StatsData.deserializeBinaryFromReader = function(msg, reader)
     case 26:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTrades(value);
+      break;
+    case 27:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setGrowthPercent(value);
+      break;
+    case 28:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setDeposits(value);
+      break;
+    case 29:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setWithdrawals(value);
       break;
     default:
       reader.skipField();
@@ -2769,6 +2784,27 @@ proto.mt4_term_api.StatsData.serializeBinaryToWriter = function(message, writer)
   if (f !== 0) {
     writer.writeInt64(
       26,
+      f
+    );
+  }
+  f = message.getGrowthPercent();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      27,
+      f
+    );
+  }
+  f = message.getDeposits();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      28,
+      f
+    );
+  }
+  f = message.getWithdrawals();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      29,
       f
     );
   }
@@ -3488,6 +3524,60 @@ proto.mt4_term_api.StatsData.prototype.getTrades = function() {
  */
 proto.mt4_term_api.StatsData.prototype.setTrades = function(value) {
   return jspb.Message.setProto3IntField(this, 26, value);
+};
+
+
+/**
+ * optional double growth_percent = 27;
+ * @return {number}
+ */
+proto.mt4_term_api.StatsData.prototype.getGrowthPercent = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 27, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.StatsData} returns this
+ */
+proto.mt4_term_api.StatsData.prototype.setGrowthPercent = function(value) {
+  return jspb.Message.setProto3FloatField(this, 27, value);
+};
+
+
+/**
+ * optional double deposits = 28;
+ * @return {number}
+ */
+proto.mt4_term_api.StatsData.prototype.getDeposits = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 28, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.StatsData} returns this
+ */
+proto.mt4_term_api.StatsData.prototype.setDeposits = function(value) {
+  return jspb.Message.setProto3FloatField(this, 28, value);
+};
+
+
+/**
+ * optional double withdrawals = 29;
+ * @return {number}
+ */
+proto.mt4_term_api.StatsData.prototype.getWithdrawals = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 29, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.StatsData} returns this
+ */
+proto.mt4_term_api.StatsData.prototype.setWithdrawals = function(value) {
+  return jspb.Message.setProto3FloatField(this, 29, value);
 };
 
 
@@ -6355,7 +6445,8 @@ proto.mt4_term_api.EquityPointData.toObject = function(includeInstance, msg) {
     equityDrawdownRaw: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0),
     equityDrawdownRelative: jspb.Message.getFloatingPointFieldWithDefault(msg, 7, 0.0),
     realizedPl: jspb.Message.getFloatingPointFieldWithDefault(msg, 8, 0.0),
-    unrealizedPl: jspb.Message.getFloatingPointFieldWithDefault(msg, 9, 0.0)
+    unrealizedPl: jspb.Message.getFloatingPointFieldWithDefault(msg, 9, 0.0),
+    cashFlow: jspb.Message.getFloatingPointFieldWithDefault(msg, 11, 0.0)
   };
 
   if (includeInstance) {
@@ -6433,6 +6524,10 @@ proto.mt4_term_api.EquityPointData.deserializeBinaryFromReader = function(msg, r
     case 9:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setUnrealizedPl(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setCashFlow(value);
       break;
     default:
       reader.skipField();
@@ -6532,6 +6627,13 @@ proto.mt4_term_api.EquityPointData.serializeBinaryToWriter = function(message, w
   if (f !== 0.0) {
     writer.writeDouble(
       9,
+      f
+    );
+  }
+  f = message.getCashFlow();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      11,
       f
     );
   }
@@ -6753,6 +6855,24 @@ proto.mt4_term_api.EquityPointData.prototype.getUnrealizedPl = function() {
  */
 proto.mt4_term_api.EquityPointData.prototype.setUnrealizedPl = function(value) {
   return jspb.Message.setProto3FloatField(this, 9, value);
+};
+
+
+/**
+ * optional double cash_flow = 11;
+ * @return {number}
+ */
+proto.mt4_term_api.EquityPointData.prototype.getCashFlow = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 11, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mt4_term_api.EquityPointData} returns this
+ */
+proto.mt4_term_api.EquityPointData.prototype.setCashFlow = function(value) {
+  return jspb.Message.setProto3FloatField(this, 11, value);
 };
 
 
