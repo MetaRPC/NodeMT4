@@ -7225,7 +7225,11 @@ proto.mrpc_admin.TerminalInfo.toObject = function(includeInstance, msg) {
     userEmail: jspb.Message.getFieldWithDefault(msg, 12, ""),
     startupDurationSeconds: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
     connectedAt: (f = msg.getConnectedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-    startupTime: jspb.Message.getFieldWithDefault(msg, 15, "")
+    startupTime: jspb.Message.getFieldWithDefault(msg, 15, ""),
+    brokerDisconnectedSinceUtc: (f = msg.getBrokerDisconnectedSinceUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    tradeFailuresRecent: jspb.Message.getFieldWithDefault(msg, 17, 0),
+    tradeFailuresTotal: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    lastTradeFailure: jspb.Message.getFieldWithDefault(msg, 19, "")
   };
 
   if (includeInstance) {
@@ -7323,6 +7327,23 @@ proto.mrpc_admin.TerminalInfo.deserializeBinaryFromReader = function(msg, reader
     case 15:
       var value = /** @type {string} */ (reader.readString());
       msg.setStartupTime(value);
+      break;
+    case 16:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setBrokerDisconnectedSinceUtc(value);
+      break;
+    case 17:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setTradeFailuresRecent(value);
+      break;
+    case 18:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setTradeFailuresTotal(value);
+      break;
+    case 19:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLastTradeFailure(value);
       break;
     default:
       reader.skipField();
@@ -7457,6 +7478,35 @@ proto.mrpc_admin.TerminalInfo.serializeBinaryToWriter = function(message, writer
   if (f != null) {
     writer.writeString(
       15,
+      f
+    );
+  }
+  f = message.getBrokerDisconnectedSinceUtc();
+  if (f != null) {
+    writer.writeMessage(
+      16,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getTradeFailuresRecent();
+  if (f !== 0) {
+    writer.writeUint32(
+      17,
+      f
+    );
+  }
+  f = message.getTradeFailuresTotal();
+  if (f !== 0) {
+    writer.writeUint64(
+      18,
+      f
+    );
+  }
+  f = message.getLastTradeFailure();
+  if (f.length > 0) {
+    writer.writeString(
+      19,
       f
     );
   }
@@ -7840,6 +7890,97 @@ proto.mrpc_admin.TerminalInfo.prototype.clearStartupTime = function() {
  */
 proto.mrpc_admin.TerminalInfo.prototype.hasStartupTime = function() {
   return jspb.Message.getField(this, 15) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp broker_disconnected_since_utc = 16;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.mrpc_admin.TerminalInfo.prototype.getBrokerDisconnectedSinceUtc = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 16));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.mrpc_admin.TerminalInfo} returns this
+*/
+proto.mrpc_admin.TerminalInfo.prototype.setBrokerDisconnectedSinceUtc = function(value) {
+  return jspb.Message.setWrapperField(this, 16, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.mrpc_admin.TerminalInfo} returns this
+ */
+proto.mrpc_admin.TerminalInfo.prototype.clearBrokerDisconnectedSinceUtc = function() {
+  return this.setBrokerDisconnectedSinceUtc(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.mrpc_admin.TerminalInfo.prototype.hasBrokerDisconnectedSinceUtc = function() {
+  return jspb.Message.getField(this, 16) != null;
+};
+
+
+/**
+ * optional uint32 trade_failures_recent = 17;
+ * @return {number}
+ */
+proto.mrpc_admin.TerminalInfo.prototype.getTradeFailuresRecent = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 17, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mrpc_admin.TerminalInfo} returns this
+ */
+proto.mrpc_admin.TerminalInfo.prototype.setTradeFailuresRecent = function(value) {
+  return jspb.Message.setProto3IntField(this, 17, value);
+};
+
+
+/**
+ * optional uint64 trade_failures_total = 18;
+ * @return {number}
+ */
+proto.mrpc_admin.TerminalInfo.prototype.getTradeFailuresTotal = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.mrpc_admin.TerminalInfo} returns this
+ */
+proto.mrpc_admin.TerminalInfo.prototype.setTradeFailuresTotal = function(value) {
+  return jspb.Message.setProto3IntField(this, 18, value);
+};
+
+
+/**
+ * optional string last_trade_failure = 19;
+ * @return {string}
+ */
+proto.mrpc_admin.TerminalInfo.prototype.getLastTradeFailure = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 19, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mrpc_admin.TerminalInfo} returns this
+ */
+proto.mrpc_admin.TerminalInfo.prototype.setLastTradeFailure = function(value) {
+  return jspb.Message.setProto3StringField(this, 19, value);
 };
 
 

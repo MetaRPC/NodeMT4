@@ -858,7 +858,8 @@ proto.mt4_term_api.AccountsListItem.toObject = function(includeInstance, msg) {
     stoppedUtc: (f = msg.getStoppedUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     stopReason: jspb.Message.getFieldWithDefault(msg, 11, ""),
     errorMessage: jspb.Message.getFieldWithDefault(msg, 12, ""),
-    expiresUtc: (f = msg.getExpiresUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f)
+    expiresUtc: (f = msg.getExpiresUtc()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    dedicatedIp: jspb.Message.getFieldWithDefault(msg, 14, "")
   };
 
   if (includeInstance) {
@@ -949,6 +950,10 @@ proto.mt4_term_api.AccountsListItem.deserializeBinaryFromReader = function(msg, 
       var value = new google_protobuf_timestamp_pb.Timestamp;
       reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
       msg.setExpiresUtc(value);
+      break;
+    case 14:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setDedicatedIp(value);
       break;
     default:
       reader.skipField();
@@ -1071,6 +1076,13 @@ proto.mt4_term_api.AccountsListItem.serializeBinaryToWriter = function(message, 
       13,
       f,
       google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getDedicatedIp();
+  if (f.length > 0) {
+    writer.writeString(
+      14,
+      f
     );
   }
 };
@@ -1364,6 +1376,24 @@ proto.mt4_term_api.AccountsListItem.prototype.clearExpiresUtc = function() {
  */
 proto.mt4_term_api.AccountsListItem.prototype.hasExpiresUtc = function() {
   return jspb.Message.getField(this, 13) != null;
+};
+
+
+/**
+ * optional string dedicated_ip = 14;
+ * @return {string}
+ */
+proto.mt4_term_api.AccountsListItem.prototype.getDedicatedIp = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 14, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.mt4_term_api.AccountsListItem} returns this
+ */
+proto.mt4_term_api.AccountsListItem.prototype.setDedicatedIp = function(value) {
+  return jspb.Message.setProto3StringField(this, 14, value);
 };
 
 
