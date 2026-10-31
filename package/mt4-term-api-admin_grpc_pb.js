@@ -226,6 +226,28 @@ function deserialize_mrpc_admin_RefreshMrpcRestReply(buffer_arg) {
   return mt4$term$api$admin_pb.RefreshMrpcRestReply.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_mrpc_admin_SetDedicatedIpEntitlementReply(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.SetDedicatedIpEntitlementReply)) {
+    throw new Error('Expected argument of type mrpc_admin.SetDedicatedIpEntitlementReply');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_SetDedicatedIpEntitlementReply(buffer_arg) {
+  return mt4$term$api$admin_pb.SetDedicatedIpEntitlementReply.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_mrpc_admin_SetDedicatedIpEntitlementRequest(arg) {
+  if (!(arg instanceof mt4$term$api$admin_pb.SetDedicatedIpEntitlementRequest)) {
+    throw new Error('Expected argument of type mrpc_admin.SetDedicatedIpEntitlementRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_mrpc_admin_SetDedicatedIpEntitlementRequest(buffer_arg) {
+  return mt4$term$api$admin_pb.SetDedicatedIpEntitlementRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_mrpc_admin_StopTerminalLocalReply(arg) {
   if (!(arg instanceof mt4$term$api$admin_pb.StopTerminalLocalReply)) {
     throw new Error('Expected argument of type mrpc_admin.StopTerminalLocalReply');
@@ -524,6 +546,19 @@ stopTerminalLocal: {
     requestDeserialize: deserialize_mrpc_admin_StopTerminalLocalRequest,
     responseSerialize: serialize_mrpc_admin_StopTerminalLocalReply,
     responseDeserialize: deserialize_mrpc_admin_StopTerminalLocalReply,
+  },
+  // Grants or revokes the dedicated-IP add-on entitlement for ONE terminal (see the mt5 admin proto for the canonical
+// definition; this copy exists for the mt4 client libs). ADMIN_KEY required.
+setDedicatedIpEntitlement: {
+    path: '/mrpc_admin.AdminApi/SetDedicatedIpEntitlement',
+    requestStream: false,
+    responseStream: false,
+    requestType: mt4$term$api$admin_pb.SetDedicatedIpEntitlementRequest,
+    responseType: mt4$term$api$admin_pb.SetDedicatedIpEntitlementReply,
+    requestSerialize: serialize_mrpc_admin_SetDedicatedIpEntitlementRequest,
+    requestDeserialize: deserialize_mrpc_admin_SetDedicatedIpEntitlementRequest,
+    responseSerialize: serialize_mrpc_admin_SetDedicatedIpEntitlementReply,
+    responseDeserialize: deserialize_mrpc_admin_SetDedicatedIpEntitlementReply,
   },
 };
 
