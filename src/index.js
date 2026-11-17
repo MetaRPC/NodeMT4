@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MT4Client = exports.MT4Error = exports.MrpcError = exports.ORDER_TYPES = exports.TIMEFRAMES = exports.TimestampPb = exports.ErrorPb = exports.MarketInfoPb = exports.MarketInfoGrpc = exports.SubscriptionsPb = exports.SubscriptionsGrpc = exports.TradingHelperPb = exports.TradingHelperGrpc = exports.AccountHelperPb = exports.AccountHelperGrpc = exports.ConnectionPb = exports.ConnectionGrpc = void 0;
+exports.MT4Client = exports.MT4Error = exports.TradeOutcomeUnknownError = exports.MrpcError = exports.ORDER_TYPES = exports.TIMEFRAMES = exports.TimestampPb = exports.ErrorPb = exports.MarketInfoPb = exports.MarketInfoGrpc = exports.SubscriptionsPb = exports.SubscriptionsGrpc = exports.TradingHelperPb = exports.TradingHelperGrpc = exports.AccountHelperPb = exports.AccountHelperGrpc = exports.ConnectionPb = exports.ConnectionGrpc = void 0;
 const grpc = __importStar(require("@grpc/grpc-js"));
 const crypto = __importStar(require("crypto"));
 // Low-level gRPC and Protobuf bindings (generated from the MetaRPC MT4 protos)
@@ -101,9 +101,75 @@ class MrpcError extends Error {
         const s = `${this.code}`.toUpperCase();
         return s.includes('TERMINAL_INSTANCE_NOT_FOUND') || s.includes('TERMINAL_REGISTRY_TERMINAL_NOT_FOUND');
     }
+    /** The API key was refused (API_KEY_INVALID / API_KEY_REQUIRED): retrying or reconnecting does not help. */
+    get isApiKeyError() {
+        return isApiKeyText(`${this.code} ${this.message}`);
+    }
+    /** The trade call this error came from (`OrderSend`, `OrderModify`, `OrderCloseDelete`, `OrderCloseBy`); unset for other calls. */
+    operation;
+    /**
+     * The outcome of the trade call is unknown: it timed out on the gateway or in the terminal (MRPC_TIMEOUT,
+     * COMMAND_TIMEOUT_EXCEEDED, TERMINAL_API_CALL_TIMEOUT, ...) or MT4 answered 128 (ERR_TRADE_TIMEOUT). The trade may
+     * or may not have been executed: check the open orders before sending it again.
+     */
+    get isTradeOutcomeUnknown() {
+        if (this.code === TRADE_OUTCOME_UNKNOWN)
+            return true;
+        if (!this.operation)
+            return false;
+        if (IN_BAND_TIMEOUT_CODES.includes(this.code))
+            return true;
+        const type = Number(this.error && this.error.getType ? this.error.getType() : 0);
+        if (type === 3 || type === 4)
+            return true; // ErrorType MRPC_TIMEOUT / TERMINAL_API_TIMEOUT
+        return this.mqlIntCode === 128;
+    }
 }
 exports.MrpcError = MrpcError;
 exports.MT4Error = MrpcError;
+const TRADE_OUTCOME_UNKNOWN = 'TRADE_OUTCOME_UNKNOWN';
+const IN_BAND_TIMEOUT_CODES = ['MRPC_TIMEOUT', 'TERMINAL_API_TIMEOUT', 'COMMAND_TIMEOUT_EXCEEDED', 'TERMINAL_API_CALL_TIMEOUT'];
+const isApiKeyText = (s) => /API_KEY_(INVALID|REQUIRED)/i.test(s);
+/**
+ * A trade call (`orderSend`, `orderModify`, `orderClose`, `orderCloseBy`) failed at the transport level - gRPC
+ * UNAVAILABLE, DEADLINE_EXCEEDED, UNKNOWN or INTERNAL - after the request may already have reached the terminal: the
+ * trade may or may not have been executed. The SDK never re-sends a trade: check the open orders (and the history)
+ * before sending it again.
+ * It keeps the shape of the gRPC error it stands for: `code` is still the gRPC status number (also in `grpcCode`),
+ * `details` and `metadata` are the original ones and `cause` is the original error, so existing
+ * `err.code === grpc.status.UNAVAILABLE` checks keep working. `errorCode` is `TRADE_OUTCOME_UNKNOWN`, `operation` the
+ * trade call (e.g. `OrderSend`).
+ */
+class TradeOutcomeUnknownError extends Error {
+    /** The error code of this condition, the same in every MetaRPC SDK. */
+    static CODE = TRADE_OUTCOME_UNKNOWN;
+    errorCode = TRADE_OUTCOME_UNKNOWN;
+    isTradeOutcomeUnknown = true;
+    /** The gRPC status number of the transport failure (unchanged, as on the original error). */
+    code;
+    grpcCode;
+    details;
+    metadata;
+    operation;
+    constructor(operation, transportError) {
+        const grpcCode = Number(transportError?.code);
+        super(`${TRADE_OUTCOME_UNKNOWN}: ${operation} failed with gRPC ${grpc.status[grpcCode] ?? grpcCode} after the request may have reached the terminal; ` +
+            'the trade may or may not have been executed. It was NOT re-sent automatically: check open positions/orders before retrying. ' +
+            `(${transportError?.details ?? transportError?.message ?? ''})`, { cause: transportError });
+        this.name = 'TradeOutcomeUnknownError';
+        this.code = grpcCode;
+        this.grpcCode = grpcCode;
+        this.details = transportError?.details ?? '';
+        this.metadata = transportError?.metadata;
+        this.operation = operation;
+    }
+    /** True for the gRPC status codes after which a trade's outcome is unknown. */
+    static isUnknownOutcome(code) {
+        return code === grpc.status.UNAVAILABLE || code === grpc.status.DEADLINE_EXCEEDED
+            || code === grpc.status.UNKNOWN || code === grpc.status.INTERNAL;
+    }
+}
+exports.TradeOutcomeUnknownError = TradeOutcomeUnknownError;
 const tsToSeconds = (ts) => (ts && ts.getSeconds ? Number(ts.getSeconds()) : 0);
 const tsToMillis = (ts) => (ts && ts.getSeconds ? Number(ts.getSeconds()) * 1000 + Math.floor(Number(ts.getNanos() || 0) / 1e6) : 0);
 const toTimestamp = (d) => {
@@ -221,6 +287,25 @@ class MT4Client {
             throw MrpcError.fromReply(reply.getError());
         }
         return reply && typeof reply.getData === 'function' ? reply.getData() : reply;
+    }
+    /**
+     * A trade call through `call()`: sent exactly once, never re-sent (not even after reconnect()). An error reply gets
+     * the trade call in its `operation`; a transport failure after which the trade may have been executed becomes a
+     * `TradeOutcomeUnknownError` (same gRPC `code`).
+     */
+    async tradeCall(operation, method, req, timeoutMs) {
+        try {
+            return await this.call(this.tradingClient, method, req, timeoutMs);
+        }
+        catch (err) {
+            if (err instanceof MrpcError) {
+                err.operation = operation;
+            }
+            else if (err && TradeOutcomeUnknownError.isUnknownOutcome(err.code) && !isApiKeyText(`${err.details ?? ''} ${err.message ?? ''}`)) {
+                throw new TradeOutcomeUnknownError(operation, err);
+            }
+            throw err;
+        }
     }
     /** The terminal id the server assigns to these credentials (Connection.GetId). Defaults to the last connect()'s. */
     async getId(user, password) {
@@ -549,7 +634,7 @@ class MT4Client {
             grpcReq.setMagicNumber(magic);
         if (req.expiration)
             grpcReq.setExpiration(toTimestamp(req.expiration));
-        const data = await this.call(this.tradingClient, 'orderSend', grpcReq, 60000);
+        const data = await this.tradeCall('OrderSend', 'orderSend', grpcReq, 60000);
         if (!data)
             throw new MrpcError('Order execution returned no data');
         const vol = data.getVolume();
@@ -575,7 +660,7 @@ class MT4Client {
             grpcReq.setNewPrice(req.price);
         if (req.expiration)
             grpcReq.setNewExpiration(toTimestamp(req.expiration));
-        const data = await this.call(this.tradingClient, 'orderModify', grpcReq, 60000);
+        const data = await this.tradeCall('OrderModify', 'orderModify', grpcReq, 60000);
         if (!data)
             throw new MrpcError('OrderModify returned no data');
         return { modified: !!data.getOrderWasModified() };
@@ -613,7 +698,7 @@ class MT4Client {
         grpcReq.setClosingPrice(price);
         if (req.slippage !== undefined)
             grpcReq.setSlippage(req.slippage);
-        const data = await this.call(this.tradingClient, 'orderCloseDelete', grpcReq, 60000);
+        const data = await this.tradeCall('OrderCloseDelete', 'orderCloseDelete', grpcReq, 60000);
         if (!data)
             throw new MrpcError('OrderCloseDelete returned no data');
         return { mode: Number(data.getMode()), historyComment: data.getHistoryOrderComment ? data.getHistoryOrderComment() : '' };
@@ -623,7 +708,7 @@ class MT4Client {
         const grpcReq = new exports.TradingHelperPb.OrderCloseByRequest();
         grpcReq.setTicketToClose(ticket);
         grpcReq.setOppositeTicketClosingBy(oppositeTicket);
-        const data = await this.call(this.tradingClient, 'orderCloseBy', grpcReq, 60000);
+        const data = await this.tradeCall('OrderCloseBy', 'orderCloseBy', grpcReq, 60000);
         if (!data)
             throw new MrpcError('OrderCloseBy returned no data');
         return { closePrice: data.getClosePrice(), profit: data.getProfit(), closeTime: tsToSeconds(data.getCloseTime()) };

@@ -230,6 +230,41 @@ export declare class MrpcError extends Error {
     get isInvalidLogin(): boolean;
     /** Errors after which reconnect() is worth a try (the terminal vanished on the gateway). */
     get isTerminalLost(): boolean;
+    /** The API key was refused (API_KEY_INVALID / API_KEY_REQUIRED): retrying or reconnecting does not help. */
+    get isApiKeyError(): boolean;
+    /** The trade call this error came from (`OrderSend`, `OrderModify`, `OrderCloseDelete`, `OrderCloseBy`); unset for other calls. */
+    operation?: string;
+    /**
+     * The outcome of the trade call is unknown: it timed out on the gateway or in the terminal (MRPC_TIMEOUT,
+     * COMMAND_TIMEOUT_EXCEEDED, TERMINAL_API_CALL_TIMEOUT, ...) or MT4 answered 128 (ERR_TRADE_TIMEOUT). The trade may
+     * or may not have been executed: check the open orders before sending it again.
+     */
+    get isTradeOutcomeUnknown(): boolean;
+}
+/**
+ * A trade call (`orderSend`, `orderModify`, `orderClose`, `orderCloseBy`) failed at the transport level - gRPC
+ * UNAVAILABLE, DEADLINE_EXCEEDED, UNKNOWN or INTERNAL - after the request may already have reached the terminal: the
+ * trade may or may not have been executed. The SDK never re-sends a trade: check the open orders (and the history)
+ * before sending it again.
+ * It keeps the shape of the gRPC error it stands for: `code` is still the gRPC status number (also in `grpcCode`),
+ * `details` and `metadata` are the original ones and `cause` is the original error, so existing
+ * `err.code === grpc.status.UNAVAILABLE` checks keep working. `errorCode` is `TRADE_OUTCOME_UNKNOWN`, `operation` the
+ * trade call (e.g. `OrderSend`).
+ */
+export declare class TradeOutcomeUnknownError extends Error {
+    /** The error code of this condition, the same in every MetaRPC SDK. */
+    static readonly CODE = "TRADE_OUTCOME_UNKNOWN";
+    readonly errorCode: string;
+    readonly isTradeOutcomeUnknown: boolean;
+    /** The gRPC status number of the transport failure (unchanged, as on the original error). */
+    readonly code: number;
+    readonly grpcCode: number;
+    readonly details: string;
+    readonly metadata: any;
+    readonly operation: string;
+    constructor(operation: string, transportError: any);
+    /** True for the gRPC status codes after which a trade's outcome is unknown. */
+    static isUnknownOutcome(code: number): boolean;
 }
 /** Alias of MrpcError. */
 export { MrpcError as MT4Error };
@@ -275,6 +310,12 @@ export declare class MT4Client {
      * for the methods this class does not wrap.
      */
     call(client: any, method: string, req: any, timeoutMs?: number): Promise<any>;
+    /**
+     * A trade call through `call()`: sent exactly once, never re-sent (not even after reconnect()). An error reply gets
+     * the trade call in its `operation`; a transport failure after which the trade may have been executed becomes a
+     * `TradeOutcomeUnknownError` (same gRPC `code`).
+     */
+    private tradeCall;
     /** The terminal id the server assigns to these credentials (Connection.GetId). Defaults to the last connect()'s. */
     getId(user?: number | string, password?: string): Promise<string>;
     /**
