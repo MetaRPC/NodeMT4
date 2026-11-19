@@ -27,17 +27,34 @@ Clone the repository and run the quickstart example out-of-the-box:
 git clone https://github.com/MetaRPC/NodeMT4.git
 cd NodeMT4
 npm install
+```
 
-# 1. Run with default TRIAL key:
+`quickstart.js` connects with your terminal **login / password / server**. With **no**
+`MT4_LOGIN` / `MT4_PASSWORD` it opens a fresh **demo account** for you automatically
+(`MT4_SERVER` defaults to `TeleTrade-Demo`). The MetaRPC **API key** is optional — omit it
+and the SDK uses the built-in `TRIAL` key.
+
+```bash
+# 1. Minimal run (TRIAL key — opens a demo account for you):
 node examples/quickstart.js
 
-# 2. Or pass your MetaRPC API key directly as an argument:
+# 2. Use your own account (login / password / server):
+MT4_LOGIN=500000 MT4_PASSWORD=your_password MT4_SERVER=TeleTrade-Demo node examples/quickstart.js
+
+# 3. Pass your MetaRPC API key as an argument:
 node examples/quickstart.js your_api_key_here
 
-# 3. Or use the MRPC_API_KEY environment variable:
-export MRPC_API_KEY="your_api_key_here"        # Windows CMD: set MRPC_API_KEY=your_api_key_here
-node examples/quickstart.js                    # Windows PowerShell: $env:MRPC_API_KEY="your_api_key_here"
+# 4. Or supply the API key via the MRPC_API_KEY environment variable:
+export MRPC_API_KEY="your_api_key_here"
+node examples/quickstart.js
 ```
+
+> **Windows PowerShell:** set variables first, then run —
+> `$env:MT4_LOGIN="500000"; $env:MT4_PASSWORD="your_password"; node examples/quickstart.js`
+> (Windows CMD uses `set MT4_LOGIN=500000`).
+
+The committed `src/*.js` are checked in, so no build step is required; run `npm run build`
+only after editing the TypeScript sources.
 
 ---
 
@@ -46,7 +63,7 @@ node examples/quickstart.js                    # Windows PowerShell: $env:MRPC_A
 Connecting to MetaRPC production endpoints (`mt4.mrpc.pro:443`) requires an API key:
 
 1. **Sign Up**: Create an account for free at [https://mrpc.pro/signup](https://mrpc.pro/signup).
-2. **Generate API Key**: In your MetaRPC Portal dashboard at [https://mrpc.pro/my](https://mrpc.pro/my), go to **API Keys** to generate and copy your personal API token.
+2. **Get your API Key**: Your personal API key appears automatically in the MetaRPC Portal dashboard at [https://mrpc.pro/my](https://mrpc.pro/my) under **API Keys** — just copy it (the key itself is free).
 3. **Configure Connection**: Pass your API key / token along with the server address (`mt4.mrpc.pro:443`) in your connection settings.
 
 ---

@@ -1,55 +1,52 @@
 /**
- * MetaRPC NodeMT4 Quickstart Example
- * Demonstrates:
- * 1. Initializing the client with an API key
- * 2. Using your MT4 credentials (MT4_LOGIN / MT4_PASSWORD / MT4_SERVER) or opening a new demo account
- * 3. Connecting to mt4.mrpc.pro:443 (MRPC_GRPC_HOST overrides the host)
- * 4. Reading the account and placing a 0.01 lot buy
- * 5. Disconnecting
+ * MetaRPC NodeMT4 Quickstart — the smallest end-to-end program.
+ *
+ * Connect → read balance & price → open a tiny demo order → close it.
+ *
+ * RUN:
+ *   npm install
+ *   MT4_LOGIN=... MT4_PASSWORD=... MT4_SERVER=TeleTrade-Demo node examples/quickstart.js
+ *   # or pass an API key:  node examples/quickstart.js <API_KEY>
+ *   # with no MT4_LOGIN/PASSWORD it opens a fresh demo account for you.
  */
 
-const { MT4Client } = require('../src/index.js');
+'use strict';
+
+const { MT4Sugar, MT4Account } = require('../src/index.js');
 
 async function main() {
-  const apiKey = process.argv[2] || process.env.MRPC_API_KEY || 'TRIAL';
+  const apiKey = process.argv[2] || process.env.MRPC_API_KEY || null; // null → TRIAL
   const host = (process.env.MRPC_GRPC_HOST || 'mt4.mrpc.pro').replace(/:443$/, '');
-  const client = new MT4Client(host, 443, apiKey);
 
-  const login = process.env.MT4_LOGIN || process.env.MT4_USER;
-  let user = login ? parseInt(login, 10) : null;
+  let user = Number(process.env.MT4_LOGIN || process.env.MT4_USER) || null;
   let password = process.env.MT4_PASSWORD || null;
   let server = process.env.MT4_SERVER || 'TeleTrade-Demo';
 
   if (!user || !password) {
-    console.log('--- Step 0: Opening a demo account ---');
-    const demo = await MT4Client.openDemoAccount(server, apiKey, host);
-    user = demo.login;
-    password = demo.password;
-    server = demo.server;
+    console.log('--- Step 0: opening a demo account ---');
+    const demo = await MT4Account.openDemoAccount(server, apiKey || 'TRIAL', host);
+    user = demo.login; password = demo.password; server = demo.server;
     console.log(`Demo account opened: #${user} (server ${server})`);
   }
 
-  console.log('\n--- Step 1: Connect ---');
-  await client.connect({ user, password, server });
-  console.log(`Connected to ${host}:443 (terminal ${client.id})`);
-  try {
-    console.log('\n--- Step 2: Account ---');
-    const account = await client.getAccountInfo();
-    console.log(`Account:  ${account.login} (${account.name}) on ${account.server}`);
-    console.log(`Balance:  ${account.balance} ${account.currency}, equity ${account.equity}`);
-    console.log(`Leverage: 1:${account.leverage}`);
+  const sugar = MT4Sugar.create(host, 443, apiKey);
+  await sugar.quickConnect(user, password, server);
+  console.log('✓ connected to', server);
 
-    console.log('\n--- Step 3: Market order ---');
-    const order = await client.orderSend({ symbol: 'EURUSD', cmd: 'BUY', lots: 0.01, slippage: 30, comment: 'MetaRPC Node MT4 quickstart' });
-    console.log(`Order placed: ticket #${order.ticket}, ${order.lots} lots at ${order.price}`);
-  } finally {
-    console.log('\n--- Step 4: Disconnect ---');
-    await client.disconnect();
-    console.log('Disconnected.');
+  console.log(`balance ${(await sugar.getBalance()).toFixed(2)}   equity ${(await sugar.getEquity()).toFixed(2)}`);
+  console.log(`EURUSD  bid ${await sugar.getBid('EURUSD')}  ask ${await sugar.getAsk('EURUSD')}`);
+
+  try {
+    const ticket = await sugar.buyMarket('EURUSD', 0.01);   // ⚠ tiny demo order
+    console.log(`opened #${ticket}`);
+    await sugar.closePosition(ticket);
+    console.log('closed');
+  } catch (e) {
+    console.log(`order rejected: ${e.message} (market closed? try a 24/7 symbol)`);
   }
+
+  await sugar.service().disconnect();
+  console.log('disconnected');
 }
 
-main().catch((err) => {
-  console.error(err.message || err);
-  process.exit(1);
-});
+main().catch((e) => { console.error('error:', e.message || e); process.exit(1); });
