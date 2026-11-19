@@ -3,7 +3,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 const grpc = require('@grpc/grpc-js');
-const { MT4Client, MrpcError, TradeOutcomeUnknownError } = require('../src/index.js');
+const { MT4Service, MrpcError, TradeOutcomeUnknownError } = require('../src/index.js');
 const ConnectionGrpc = require('../package/mt4-term-api-connection_grpc_pb');
 const ConnectionPb = require('../package/mt4-term-api-connection_pb');
 const TradingHelperGrpc = require('../package/mt4-term-api-trading-helper_grpc_pb');
@@ -58,7 +58,7 @@ before(async () => {
 after(() => server.forceShutdown());
 
 const connected = async () => {
-  const c = new MT4Client('127.0.0.1', port, 'key-1');
+  const c = MT4Service.create('127.0.0.1', port, 'key-1');
   await c.connect({ user: 1, password: 'p', server: 'TeleTrade-Demo' });
   for (const k of Object.keys(calls)) delete calls[k];
   return c;

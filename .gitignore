@@ -5,3 +5,5 @@ site/
 *.log
 
 .cache/
+REBUILD_PLAN.md
+mkdocs.en.yml

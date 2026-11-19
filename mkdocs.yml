@@ -68,6 +68,46 @@ markdown_extensions:
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        # ── source language ──────────────────────────────────────────────
+        - locale: en
+          default: true
+          name: English
+          build: true
+        # ── Phase 1 · core Asian markets ─────────────────────────────────
+        - { locale: zh,      name: 简体中文,            build: true }
+        - { locale: ja,      name: 日本語,              build: true }
+        - { locale: ko,      name: 한국어,              build: true }
+        - { locale: vi,      name: Tiếng Việt,         build: true }
+        - { locale: th,      name: ไทย,                build: true }
+        - { locale: id,      name: Bahasa Indonesia,   build: true }
+        # ── Phase 2 · rest of Asia (RTL where noted) ─────────────────────
+        - { locale: zh-TW,   name: 繁體中文,            build: true }
+        - { locale: hi,      name: हिन्दी,               build: true }
+        - { locale: ar,      name: العربية,            build: true }
+        - { locale: ms,      name: Bahasa Melayu,      build: true }
+        - { locale: tl,      name: Filipino,           build: true }
+        - { locale: tr,      name: Türkçe,             build: true }
+        - { locale: fa,      name: فارسی,              build: true }
+        - { locale: ur,      name: اردو,               build: true }
+        - { locale: bn,      name: বাংলা,               build: true }
+        - { locale: ta,      name: தமிழ்,               build: true }
+        - { locale: my,      name: မြန်မာ,              build: true }
+        - { locale: km,      name: ខ្មែរ,                build: true }
+        - { locale: lo,      name: ລາວ,                build: true }
+        - { locale: he,      name: עברית,              build: true }
+        # ── Phase 3 · major non-Asian markets ────────────────────────────
+        - { locale: es,      name: Español,            build: true }
+        - { locale: pt-BR,   name: Português (Brasil), build: true }
+        - { locale: ru,      name: Русский,            build: true }
+        - { locale: fr,      name: Français,           build: true }
+        - { locale: de,      name: Deutsch,            build: true }
+        - { locale: it,      name: Italiano,           build: true }
+        - { locale: pl,      name: Polski,             build: true }
 
 copyright: >
   Copyright © 2024–2025 MetaRPC. MT4 is a trademark of MetaQuotes Software Corp.
@@ -77,17 +117,22 @@ nav:
   - Home: index.md
 
   - Guides:
-    - Getting Started: All_Guides/GETTING_STARTED.md
-    - Your First Project: All_Guides/Your_First_Project.md
-    - Connection: connection.md
-    - Account: account.md
-    - Trading: trading.md
-    - Quotes: quotes.md
-    - Streams: All_Guides/STREAMS.md
-    - Errors: All_Guides/ERRORS.md
+    - "GETTING STARTED": "All_Guides/GETTING_STARTED.md"
+    - "MT4 For Beginners": "All_Guides/MT4_For_Beginners.md"
+    - "Your First Project": "All_Guides/Your_First_Project.md"
+    - "PROJECT MAP": "All_Guides/PROJECT_MAP.md"
+    - "SDK ECOSYSTEM (+ Trade Copier)": "All_Guides/SDK_Ecosystem.md"
+    - "GLOSSARY": "All_Guides/GLOSSARY.md"
+    - "CONCURRENCY MODEL": "All_Guides/CONCURRENCY_MODEL.md"
+    - "GRPC STREAM MANAGEMENT": "All_Guides/GRPC_STREAM_MANAGEMENT.md"
+    - "ENUMS USAGE REFERENCE": "All_Guides/ENUMS_USAGE_REFERENCE.md"
+    - "RETURN CODES REFERENCE": "All_Guides/RETURN_CODES_REFERENCE.md"
+    - "PROTOBUF INSPECTOR GUIDE": "All_Guides/PROTOBUF_INSPECTOR_GUIDE.md"
+    - "USERCODE SANDBOX GUIDE": "All_Guides/USERCODE_SANDBOX_GUIDE.md"
 
-  - API Reference:
-    - MT4Client: api.md
-    - API methods: API_Reference/methods.md
-    - Messages: API_Reference/messages.md
-    - Enums: API_Reference/enums.md
+  - Orchestrators:
+    - "Strategies Master Overview": "Orchestrators/Strategies.Master.Overview.md"
+    - "11 Trailing stop": "Orchestrators/11_Trailing_stop.md"
+    - "12 Grid trader": "Orchestrators/12_Grid_trader.md"
+    - "13 Risk manager": "Orchestrators/13_Risk_manager.md"
+    - "14 Adaptive preset": "Orchestrators/14_AdaptivePreset.md"

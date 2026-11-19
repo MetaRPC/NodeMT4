@@ -4,7 +4,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 const grpc = require('@grpc/grpc-js');
-const { MT4Client, MrpcError, MT4Error } = require('../src/index.js');
+const { MT4Service, MT4Account, MrpcError, MT4Error } = require('../src/index.js');
 // The service definitions and messages straight from the generated stubs: the server side does not depend on the client.
 const ConnectionGrpc = require('../package/mt4-term-api-connection_grpc_pb');
 const ConnectionPb = require('../package/mt4-term-api-connection_pb');
@@ -152,13 +152,13 @@ before(async () => {
 
 after(() => server.forceShutdown());
 
-const client = () => new MT4Client('127.0.0.1', port, 'key-1');
+const client = () => MT4Service.create('127.0.0.1', port, 'key-1');
 
 test('connect sends the API key, keeps the terminal id and sends it with every later call', async () => {
   seen.length = 0;
   const c = client();
   assert.strictEqual(await c.connect({ user: 123, password: 'p', server: 'TeleTrade-Demo' }), true);
-  assert.strictEqual(c.id, TERMINAL);
+  assert.strictEqual(c.account().id, TERMINAL);
   const connect = seen.find(s => s.method === 'connectEx');
   assert.strictEqual(connect.apikey, 'key-1');
   assert.strictEqual(connect.id, undefined);
@@ -190,11 +190,11 @@ test('account info is what the server answered, with the broker server connected
 });
 
 test('an error reply is an error - also for the key and login that used to get invented answers', async () => {
-  const c = new MT4Client('127.0.0.1', port, 'mrpc_test_key');
+  const c = MT4Service.create('127.0.0.1', port, 'mrpc_test_key');
   failNext = { code: 'CONNECT_INVALID_LOGIN_ERROR', message: 'Invalid account' };
   await assert.rejects(c.connect(100234, 'demo_password', 'TeleTrade-Demo'), (e) => e instanceof MrpcError && e.code === 'CONNECT_INVALID_LOGIN_ERROR');
-  assert.strictEqual(c.connected, false);
-  assert.strictEqual(c.id, null);
+  assert.strictEqual(c.account().connected, false);
+  assert.strictEqual(c.account().id, null);
 
   await c.connect({ user: 100234, password: 'p', server: 'TeleTrade-Demo' });
   failNext = { code: 'TERMINAL_INSTANCE_NOT_FOUND', message: 'no terminal' };
@@ -265,9 +265,9 @@ test('a reply with an MQL error carries the MT4 error number and description', a
 });
 
 test('connect keeps a caller-supplied stable id and name and sends the name; uuid5 matches RFC 4122', async () => {
-  const id = MT4Client.uuid5(MT4Client.NAMESPACE_DNS, 'fleet-audit-NodeMT4');
+  const id = MT4Account.uuid5(MT4Account.NAMESPACE_DNS, 'fleet-audit-NodeMT4');
   assert.strictEqual(id, 'd2e20916-d72e-569e-93dd-bea79c535a22');       // == python uuid.uuid5(uuid.NAMESPACE_DNS, ...)
-  assert.strictEqual(MT4Client.uuid5(MT4Client.NAMESPACE_DNS, 'python.org'), '886313e1-3b8a-5372-9b90-0c9aee199e5d');
+  assert.strictEqual(MT4Account.uuid5(MT4Account.NAMESPACE_DNS, 'python.org'), '886313e1-3b8a-5372-9b90-0c9aee199e5d');
   seen.length = 0;
   const c = client();
   await c.connect({ user: 123, password: 'p', server: 'TeleTrade-Demo', id, name: 'S042', timeoutSeconds: 90 });
@@ -275,8 +275,8 @@ test('connect keeps a caller-supplied stable id and name and sends the name; uui
   assert.strictEqual(sent.id, id);                       // the stable id goes with the connect call itself
   assert.strictEqual(sent.request.getName(), 'S042');
   assert.strictEqual(sent.request.getTimeoutSeconds(), 90);
-  assert.strictEqual(c.id, TERMINAL);                    // the gateway's id wins once it answers with one
-  assert.strictEqual(c.name, 'S042');
+  assert.strictEqual(c.account().id, TERMINAL);          // the gateway's id wins once it answers with one
+  assert.strictEqual(c.account().name, 'S042');
   seen.length = 0;
   await c.reconnect();
   assert.strictEqual(seen[0].request.getName(), 'S042');
