@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Complete Node.js SDK for MetaTrader 4 trading automation via gRPC">
+        <meta name="description" content="MetaRPC NodeMT4 — Node.js & TypeScript SDK for MetaTrader 4 trading automation over gRPC. Connect, stream live ticks and orders, and execute trades from any Node application.">
       
       
       
@@ -17,6 +17,62 @@
         <link rel="next" href="All_Guides/GETTING_STARTED/">
       
       
+        
+          <link rel="alternate" href="/NodeMT4/" hreflang="en">
+        
+          <link rel="alternate" href="/NodeMT4/zh/" hreflang="zh">
+        
+          <link rel="alternate" href="/NodeMT4/ja/" hreflang="ja">
+        
+          <link rel="alternate" href="/NodeMT4/ko/" hreflang="ko">
+        
+          <link rel="alternate" href="/NodeMT4/vi/" hreflang="vi">
+        
+          <link rel="alternate" href="/NodeMT4/th/" hreflang="th">
+        
+          <link rel="alternate" href="/NodeMT4/id/" hreflang="id">
+        
+          <link rel="alternate" href="/NodeMT4/zh-TW/" hreflang="zh-TW">
+        
+          <link rel="alternate" href="/NodeMT4/hi/" hreflang="hi">
+        
+          <link rel="alternate" href="/NodeMT4/ar/" hreflang="ar">
+        
+          <link rel="alternate" href="/NodeMT4/ms/" hreflang="ms">
+        
+          <link rel="alternate" href="/NodeMT4/tl/" hreflang="tl">
+        
+          <link rel="alternate" href="/NodeMT4/tr/" hreflang="tr">
+        
+          <link rel="alternate" href="/NodeMT4/fa/" hreflang="fa">
+        
+          <link rel="alternate" href="/NodeMT4/ur/" hreflang="ur">
+        
+          <link rel="alternate" href="/NodeMT4/bn/" hreflang="bn">
+        
+          <link rel="alternate" href="/NodeMT4/ta/" hreflang="ta">
+        
+          <link rel="alternate" href="/NodeMT4/my/" hreflang="my">
+        
+          <link rel="alternate" href="/NodeMT4/km/" hreflang="km">
+        
+          <link rel="alternate" href="/NodeMT4/lo/" hreflang="lo">
+        
+          <link rel="alternate" href="/NodeMT4/he/" hreflang="he">
+        
+          <link rel="alternate" href="/NodeMT4/es/" hreflang="es">
+        
+          <link rel="alternate" href="/NodeMT4/pt-BR/" hreflang="pt-BR">
+        
+          <link rel="alternate" href="/NodeMT4/ru/" hreflang="ru">
+        
+          <link rel="alternate" href="/NodeMT4/fr/" hreflang="fr">
+        
+          <link rel="alternate" href="/NodeMT4/de/" hreflang="de">
+        
+          <link rel="alternate" href="/NodeMT4/it/" hreflang="it">
+        
+          <link rel="alternate" href="/NodeMT4/pl/" hreflang="pl">
         
       
       
@@ -151,6 +207,276 @@
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
+      
+
+<div class="md-header__option">
+  <div class="md-select md-select--lang">
+    <button class="md-header__button md-lang-button" aria-label="Select language">
+      
+      <span class="md-lang-globe md-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg></span>
+      <span class="md-lang-current">EN</span>
+      <span class="md-lang-caret">▾</span>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/" hreflang="en"
+               class="md-select__link lang-link lang-link--active">
+              <span class="lang-badge">EN</span>
+              <span class="lang-name">English</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/zh/" hreflang="zh"
+               class="md-select__link lang-link">
+              <span class="lang-badge">CN</span>
+              <span class="lang-name">简体中文</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ja/" hreflang="ja"
+               class="md-select__link lang-link">
+              <span class="lang-badge">JP</span>
+              <span class="lang-name">日本語</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ko/" hreflang="ko"
+               class="md-select__link lang-link">
+              <span class="lang-badge">KR</span>
+              <span class="lang-name">한국어</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/vi/" hreflang="vi"
+               class="md-select__link lang-link">
+              <span class="lang-badge">VN</span>
+              <span class="lang-name">Tiếng Việt</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/th/" hreflang="th"
+               class="md-select__link lang-link">
+              <span class="lang-badge">TH</span>
+              <span class="lang-name">ไทย</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/id/" hreflang="id"
+               class="md-select__link lang-link">
+              <span class="lang-badge">ID</span>
+              <span class="lang-name">Bahasa Indonesia</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/zh-TW/" hreflang="zh-TW"
+               class="md-select__link lang-link">
+              <span class="lang-badge">TW</span>
+              <span class="lang-name">繁體中文</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/hi/" hreflang="hi"
+               class="md-select__link lang-link">
+              <span class="lang-badge">IN</span>
+              <span class="lang-name">हिन्दी</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ar/" hreflang="ar"
+               class="md-select__link lang-link">
+              <span class="lang-badge">AR</span>
+              <span class="lang-name">العربية</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ms/" hreflang="ms"
+               class="md-select__link lang-link">
+              <span class="lang-badge">MY</span>
+              <span class="lang-name">Bahasa Melayu</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/tl/" hreflang="tl"
+               class="md-select__link lang-link">
+              <span class="lang-badge">PH</span>
+              <span class="lang-name">Filipino</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/tr/" hreflang="tr"
+               class="md-select__link lang-link">
+              <span class="lang-badge">TR</span>
+              <span class="lang-name">Türkçe</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/fa/" hreflang="fa"
+               class="md-select__link lang-link">
+              <span class="lang-badge">IR</span>
+              <span class="lang-name">فارسی</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ur/" hreflang="ur"
+               class="md-select__link lang-link">
+              <span class="lang-badge">PK</span>
+              <span class="lang-name">اردو</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/bn/" hreflang="bn"
+               class="md-select__link lang-link">
+              <span class="lang-badge">BD</span>
+              <span class="lang-name">বাংলা</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ta/" hreflang="ta"
+               class="md-select__link lang-link">
+              <span class="lang-badge">TA</span>
+              <span class="lang-name">தமிழ்</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/my/" hreflang="my"
+               class="md-select__link lang-link">
+              <span class="lang-badge">MM</span>
+              <span class="lang-name">မြန်မာ</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/km/" hreflang="km"
+               class="md-select__link lang-link">
+              <span class="lang-badge">KH</span>
+              <span class="lang-name">ខ្មែរ</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/lo/" hreflang="lo"
+               class="md-select__link lang-link">
+              <span class="lang-badge">LA</span>
+              <span class="lang-name">ລາວ</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/he/" hreflang="he"
+               class="md-select__link lang-link">
+              <span class="lang-badge">IL</span>
+              <span class="lang-name">עברית</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/es/" hreflang="es"
+               class="md-select__link lang-link">
+              <span class="lang-badge">ES</span>
+              <span class="lang-name">Español</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/pt-BR/" hreflang="pt-BR"
+               class="md-select__link lang-link">
+              <span class="lang-badge">BR</span>
+              <span class="lang-name">Português (Brasil)</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/ru/" hreflang="ru"
+               class="md-select__link lang-link">
+              <span class="lang-badge">RU</span>
+              <span class="lang-name">Русский</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/fr/" hreflang="fr"
+               class="md-select__link lang-link">
+              <span class="lang-badge">FR</span>
+              <span class="lang-name">Français</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/de/" hreflang="de"
+               class="md-select__link lang-link">
+              <span class="lang-badge">DE</span>
+              <span class="lang-name">Deutsch</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/it/" hreflang="it"
+               class="md-select__link lang-link">
+              <span class="lang-badge">IT</span>
+              <span class="lang-name">Italiano</span>
+            </a>
+          </li>
+        
+          
+          <li class="md-select__item">
+            <a href="/NodeMT4/pl/" hreflang="pl"
+               class="md-select__link lang-link">
+              <span class="lang-badge">PL</span>
+              <span class="lang-name">Polski</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
     
       
       
@@ -221,7 +547,9 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -353,7 +681,35 @@
   <span class="md-ellipsis">
     
   
-    Getting Started
+    GETTING STARTED
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="All_Guides/MT4_For_Beginners/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MT4 For Beginners
   
 
     
@@ -402,14 +758,14 @@
   
   
     <li class="md-nav__item">
-      <a href="connection/" class="md-nav__link">
+      <a href="All_Guides/PROJECT_MAP/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Connection
+    PROJECT MAP
   
 
     
@@ -430,14 +786,14 @@
   
   
     <li class="md-nav__item">
-      <a href="account/" class="md-nav__link">
+      <a href="All_Guides/SDK_Ecosystem/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Account
+    SDK ECOSYSTEM (+ Trade Copier)
   
 
     
@@ -458,14 +814,14 @@
   
   
     <li class="md-nav__item">
-      <a href="trading/" class="md-nav__link">
+      <a href="All_Guides/GLOSSARY/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Trading
+    GLOSSARY
   
 
     
@@ -486,14 +842,14 @@
   
   
     <li class="md-nav__item">
-      <a href="quotes/" class="md-nav__link">
+      <a href="All_Guides/CONCURRENCY_MODEL/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Quotes
+    CONCURRENCY MODEL
   
 
     
@@ -514,14 +870,14 @@
   
   
     <li class="md-nav__item">
-      <a href="All_Guides/STREAMS/" class="md-nav__link">
+      <a href="All_Guides/GRPC_STREAM_MANAGEMENT/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Streams
+    GRPC STREAM MANAGEMENT
   
 
     
@@ -542,14 +898,98 @@
   
   
     <li class="md-nav__item">
-      <a href="All_Guides/ERRORS/" class="md-nav__link">
+      <a href="All_Guides/ENUMS_USAGE_REFERENCE/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Errors
+    ENUMS USAGE REFERENCE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="All_Guides/RETURN_CODES_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RETURN CODES REFERENCE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="All_Guides/PROTOBUF_INSPECTOR_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PROTOBUF INSPECTOR GUIDE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="All_Guides/USERCODE_SANDBOX_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    USERCODE SANDBOX GUIDE
   
 
     
@@ -597,7 +1037,7 @@
   <span class="md-ellipsis">
     
   
-    API Reference
+    Orchestrators
   
 
     
@@ -613,7 +1053,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    API Reference
+    Orchestrators
   
 
           </label>
@@ -626,14 +1066,14 @@
   
   
     <li class="md-nav__item">
-      <a href="api/" class="md-nav__link">
+      <a href="Orchestrators/Strategies.Master.Overview/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    MT4Client
+    Strategies Master Overview
   
 
     
@@ -654,14 +1094,14 @@
   
   
     <li class="md-nav__item">
-      <a href="API_Reference/methods/" class="md-nav__link">
+      <a href="Orchestrators/11_Trailing_stop/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    API methods
+    11 Trailing stop
   
 
     
@@ -682,14 +1122,14 @@
   
   
     <li class="md-nav__item">
-      <a href="API_Reference/messages/" class="md-nav__link">
+      <a href="Orchestrators/12_Grid_trader/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Messages
+    12 Grid trader
   
 
     
@@ -710,14 +1150,42 @@
   
   
     <li class="md-nav__item">
-      <a href="API_Reference/enums/" class="md-nav__link">
+      <a href="Orchestrators/13_Risk_manager/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Enums
+    13 Risk manager
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Orchestrators/14_AdaptivePreset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 Adaptive preset
   
 
     
@@ -746,7 +1214,9 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -770,6 +1240,8 @@
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
@@ -777,50 +1249,98 @@
 
 
 <h1 id="nodemt4-sdk-documentation">NodeMT4 SDK Documentation<a class="headerlink" href="#nodemt4-sdk-documentation" title="Permanent link">¶</a></h1>
-<p><strong>The Node.js and TypeScript client of the MRPC MetaTrader 4 API (<code>mt4.mrpc.pro:443</code>, gRPC).</strong></p>
-<div class="home-grid">
+<blockquote>
+<p>ℹ️ <strong>Account ID / Session ID</strong>: when connecting via <code>Connect</code> / <code>ConnectEx</code>, MetaRPC automatically generates a terminal session GUID and returns it in <code>terminalInstanceGuid</code>. You do not need to call <code>GetId</code> or supply an <code>id</code> header before connecting — subsequent calls (subscriptions, order requests) use this session ID automatically.</p>
+</blockquote>
+<div class="hx-wrap" markdown="0">
 
-<a href="All_Guides/Your_First_Project/" class="card card-0">
-  <span class="material-symbols-rounded">rocket_launch</span>
-  <h3>Your First Project</h3>
-  <p>A working program in 10 minutes</p>
-</a>
+<div class="hx-hero">
+  <p class="hx-sub">Node.js &amp; TypeScript SDK for MetaTrader 4 trading automation over gRPC — connect, stream live ticks and orders, and execute trades from any Node application.</p>
+  <div class="hx-stats">
+    <div class="hx-stat"><span class="hx-statV">3</span><span class="hx-statL">API Layers</span></div>
+    <div class="hx-stat"><span class="hx-statV">gRPC</span><span class="hx-statL">protobuf + TLS</span></div>
+    <div class="hx-stat"><span class="hx-statV">MT4</span><span class="hx-statL">Cloud Terminal</span></div>
+    <div class="hx-stat"><span class="hx-statV">Node</span><span class="hx-statL">async/await + streams</span></div>
+  </div>
+</div>
 
-<a href="All_Guides/GETTING_STARTED/" class="card card-1 card-wide">
-  <span class="material-symbols-rounded">bolt</span>
-  <h3>Getting Started</h3>
-  <p>Install, API key, the first calls</p>
-</a>
+<div class="hx-cards hx-cards-4">
 
-<a href="api/" class="card card-2">
-  <span class="material-symbols-rounded">code</span>
-  <h3>MT4Client</h3>
-  <p>Connect, account, orders, ticks</p>
-</a>
+  <a href="All_Guides/Your_First_Project/" class="hx-gc hx-orange">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Get Started</div>
+      <div class="hx-gcTitle">Quick Start</div>
+      <p class="hx-gcDesc">Your first project from scratch in 10 minutes. Connect, read your balance, place a trade.</p>
+      <div class="hx-gcCount">10 min · hands-on</div>
+    </div>
+  </a>
 
-<a href="All_Guides/STREAMS/" class="card card-3">
-  <span class="material-symbols-rounded">stream</span>
-  <h3>Streams</h3>
-  <p>Ticks, trades, profit, states</p>
-</a>
+  <a href="All_Guides/GETTING_STARTED/" class="hx-gc hx-blue">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Learn</div>
+      <div class="hx-gcTitle">Getting Started</div>
+      <p class="hx-gcDesc">New here? Start with setup, the API key, and an overview of how the SDK is organized.</p>
+      <div class="hx-gcCount">setup · overview</div>
+    </div>
+  </a>
 
-<a href="All_Guides/ERRORS/" class="card card-4">
-  <span class="material-symbols-rounded">error</span>
-  <h3>Errors</h3>
-  <p>What a refused call looks like</p>
-</a>
+  <a href="All_Guides/PROJECT_MAP/" class="hx-gc hx-purple">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Architecture</div>
+      <div class="hx-gcTitle">Project Map</div>
+      <p class="hx-gcDesc">How the low-, mid- and high-level layers fit together, and where everything lives.</p>
+      <div class="hx-gcCount">structure · layers</div>
+    </div>
+  </a>
 
-<a href="API_Reference/methods/" class="card card-5">
-  <span class="material-symbols-rounded">list</span>
-  <h3>API methods</h3>
-  <p>Every method, generated from the protos</p>
-</a>
+  <a href="All_Guides/SDK_Ecosystem/" class="hx-gc hx-pink">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Companion SDK</div>
+      <div class="hx-gcTitle">Trade Copier</div>
+      <p class="hx-gcDesc">Mirror a strategy from one account to followers — how NodeMT4 pairs with NodeCopier.</p>
+      <div class="hx-gcCount">master → followers</div>
+    </div>
+  </a>
 
-<a href="API_Reference/enums/" class="card card-6">
-  <span class="material-symbols-rounded">tune</span>
-  <h3>Enums</h3>
-  <p>Order types, error codes and the rest</p>
-</a>
+</div>
+
+<div class="hx-cards">
+
+  <a href="MT4Account/MT4Account.Master.Overview/" class="hx-gc hx-teal">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Reference · Low-level</div>
+      <div class="hx-gcTitle">MT4Account</div>
+      <p class="hx-gcDesc">Direct gRPC / protobuf layer. Maximum control over every request and raw response.</p>
+      <div class="hx-gcCount">raw gRPC · full control</div>
+    </div>
+  </a>
+
+  <a href="MT4Service/MT4Service.Overview/" class="hx-gc hx-rose">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Reference · Mid-level</div>
+      <div class="hx-gcTitle">MT4Service</div>
+      <p class="hx-gcDesc">Friendly facade over MT4Account — plain arguments and typed objects instead of protobuf.</p>
+      <div class="hx-gcCount">friendly args · typed objects</div>
+    </div>
+  </a>
+
+  <a href="MT4Sugar/MT4Sugar.API_Overview/" class="hx-gc hx-green">
+    <div class="hx-gcTop"></div>
+    <div class="hx-gcBody">
+      <div class="hx-gcTag">Reference · High-level</div>
+      <div class="hx-gcTitle">MT4Sugar</div>
+      <p class="hx-gcDesc">One-liner operations, risk-based position sizing and smart defaults for fast strategies.</p>
+      <div class="hx-gcCount">one-liners · risk sizing</div>
+    </div>
+  </a>
+
+</div>
 
 </div>
 
@@ -830,8 +1350,13 @@
 
 
 
+  
+  
 
 
+
+
+  
 
 
 
@@ -855,17 +1380,19 @@
   
     
       
+        
+      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
         
           
-          <a href="All_Guides/GETTING_STARTED/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started">
+          <a href="All_Guides/GETTING_STARTED/" class="md-footer__link md-footer__link--next" aria-label="Next: GETTING STARTED">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Getting Started
+                GETTING STARTED
               </div>
             </div>
             <div class="md-footer__button md-icon">
