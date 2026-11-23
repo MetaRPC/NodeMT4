@@ -106,7 +106,7 @@ req.setTotime(toTimestamp(new Date()));
 
 const data = await account.quoteHistory(req);
 for (const b of data.getHistoricalQuotesList()) {
-  const t = new Date(b.getTime().getSeconds() * 1000).toISOString().slice(0, 16);
+  const t = new Date(b.getTimeUtc().getSeconds() * 1000).toISOString().slice(0, 16);
   console.log(`${t}  O ${b.getOpen()} H ${b.getHigh()} L ${b.getLow()} C ${b.getClose()}`);
 }
 ```
